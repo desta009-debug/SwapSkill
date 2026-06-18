@@ -81,4 +81,34 @@ class User extends Authenticatable
 
         return asset('image/default-profile.jpg');
     }
+    public function sentRequests(): HasMany
+    {
+        return $this->hasMany(
+            SkillSwap::class,
+            'sender_id'
+        );
+    }
+
+    public function receivedRequests(): HasMany
+    {
+        return $this->hasMany(
+            SkillSwap::class,
+            'receiver_id'
+        );
+    }
+    public function receivedRatings()
+    {
+        return $this->hasMany(
+            Rating::class,
+            'rated_user_id'
+        );
+    }
+
+    public function givenRatings()
+    {
+        return $this->hasMany(
+            Rating::class,
+            'rater_id'
+        );
+    }
 }

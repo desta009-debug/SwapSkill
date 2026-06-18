@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Collection;
+use App\Services\MatchService;
 use Illuminate\Support\Facades\Auth;
 
 class MatchController extends Controller
 {
+    private MatchService $matchService;
+
+    public function __construct(
+        MatchService $matchService
+    ) {
+        $this->matchService = $matchService;
+    }
     public function index()
     {
         $currentUser = Auth::user();
@@ -50,7 +57,7 @@ class MatchController extends Controller
                     $myWantedLevel = $myWantedSkills[$skillId]->pivot->level ?? null;
                     $theirOfferLevel = $theirSkill->pivot->level ?? null;
 
-                    return $this->isLevelCompatible($theirOfferLevel, $myWantedLevel);
+                    return $this->matchService->isLevelCompatible($theirOfferLevel, $myWantedLevel);
                 })
                 ->values();
 
@@ -63,7 +70,7 @@ class MatchController extends Controller
                     $myOfferLevel = $myOfferedSkills[$skillId]->pivot->level ?? null;
                     $theirWantedLevel = $theirSkill->pivot->level ?? null;
 
-                    return $this->isLevelCompatible($myOfferLevel, $theirWantedLevel);
+                    return $this->matchService->isLevelCompatible($myOfferLevel, $theirWantedLevel);
                 })
                 ->values();
 
@@ -80,7 +87,7 @@ class MatchController extends Controller
                 'skills_they_can_teach_me' => $skillsTheyCanTeachMe,
                 'skills_they_want_from_me' => $skillsTheyWantFromMe,
                 'match_type' => $matchType,
-                'score' => $this->calculateScore(
+                'score' => $this->matchService->calculateScore(
                     $skillsTheyCanTeachMe,
                     $skillsTheyWantFromMe,
                     $matchType
@@ -88,45 +95,11 @@ class MatchController extends Controller
             ];
         })
             ->filter()
-            ->sortByDesc(fn ($match) => $match['score'])
+            ->sortByDesc(fn($match) => $match['score'])
             ->values();
 
         return view('matches.index', [
             'matches' => $matches,
         ]);
-    }
-
-    private function isLevelCompatible(?string $offerLevel, ?string $wantedLevel): bool
-    {
-        $levelRank = $this->levelRank();
-
-        if (! isset($levelRank[$offerLevel], $levelRank[$wantedLevel])) {
-            return false;
-        }
-
-        return $levelRank[$offerLevel] >= $levelRank[$wantedLevel];
-    }
-
-    private function calculateScore(
-        Collection $skillsTheyCanTeachMe,
-        Collection $skillsTheyWantFromMe,
-        string $matchType
-    ): int {
-        $baseScore = $skillsTheyCanTeachMe->count() + $skillsTheyWantFromMe->count();
-
-        if ($matchType === 'Mutual Match') {
-            return 100 + $baseScore;
-        }
-
-        return 50 + $baseScore;
-    }
-
-    private function levelRank(): array
-    {
-        return [
-            'beginner' => 1,
-            'intermediate' => 2,
-            'advanced' => 3,
-        ];
     }
 }
