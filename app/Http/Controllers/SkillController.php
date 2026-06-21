@@ -11,19 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class SkillController extends Controller
 {
-    public function dashboard()
-    {
-        $user = Auth::user();
 
-        if (! $user instanceof User) {
-            abort(403);
-        }
-
-        $offeredSkills = $user->offeredSkills()->get();
-        $wantedSkills = $user->wantedSkills()->get();
-
-        return view('dashboard', compact('offeredSkills', 'wantedSkills'));
-    }
 
     public function edit()
     {

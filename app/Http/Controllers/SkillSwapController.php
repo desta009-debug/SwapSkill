@@ -41,14 +41,14 @@ class SkillSwapController extends Controller
         $existingPending = SkillSwap::query()
             ->where('status', 'pending')
             ->where(function ($query) use ($sender, $receiverId) {
-                $query->where([
-                    'sender_id' => $sender->id,
-                    'receiver_id' => $receiverId,
-                ])
-                    ->orWhere([
-                        'sender_id' => $receiverId,
-                        'receiver_id' => $sender->id,
-                    ]);
+                $query->where(function($q) use ($sender, $receiverId) {
+                    $q->where('sender_id', $sender->id)
+                      ->where('receiver_id', $receiverId);
+                })
+                ->orWhere(function($q) use ($sender, $receiverId) {
+                    $q->where('sender_id', $receiverId)
+                      ->where('receiver_id', $sender->id);
+                });
             })
             ->exists();
 
@@ -85,6 +85,7 @@ class SkillSwapController extends Controller
             'receiver',
         ])
             ->where('receiver_id', $user->id)
+            ->where('status', 'pending')
             ->latest()
             ->get();
 
@@ -93,12 +94,26 @@ class SkillSwapController extends Controller
             'receiver',
         ])
             ->where('sender_id', $user->id)
+            ->where('status', 'pending')
+            ->latest()
+            ->get();
+
+        $activeSwaps = SkillSwap::with([
+            'sender',
+            'receiver',
+        ])
+            ->where(function($q) use ($user) {
+                $q->where('sender_id', $user->id)
+                  ->orWhere('receiver_id', $user->id);
+            })
+            ->where('status', 'accepted')
             ->latest()
             ->get();
 
         return view('swaps.index', compact(
             'incomingRequests',
-            'outgoingRequests'
+            'outgoingRequests',
+            'activeSwaps'
         ));
     }
 
@@ -108,14 +123,18 @@ class SkillSwapController extends Controller
             abort(403);
         }
 
+        if ($skillSwap->status !== 'pending') {
+            return back()->with('error', 'Request ini tidak lagi pending.');
+        }
+
         $skillSwap->update([
             'status' => 'accepted',
             'accepted_at' => now(),
         ]);
 
-        return back()->with(
+        return redirect()->route('messages.show', $skillSwap)->with(
             'success',
-            'Request diterima.'
+            'Request diterima. Selamat berdiskusi!'
         );
     }
 
@@ -123,6 +142,10 @@ class SkillSwapController extends Controller
     {
         if ($skillSwap->receiver_id !== Auth::id()) {
             abort(403);
+        }
+
+        if ($skillSwap->status !== 'pending') {
+            return back()->with('error', 'Request ini tidak lagi pending.');
         }
 
         $skillSwap->update([
@@ -142,6 +165,10 @@ class SkillSwapController extends Controller
             Auth::id() !== $skillSwap->receiver_id
         ) {
             abort(403);
+        }
+
+        if ($skillSwap->status !== 'accepted') {
+            return back()->with('error', 'Hanya request yang sudah di-accept yang bisa diselesaikan.');
         }
 
         $skillSwap->update([
@@ -165,18 +192,14 @@ class SkillSwapController extends Controller
         $completedSwaps = SkillSwap::with([
             'sender',
             'receiver',
+            'ratings' => function($q) use ($user) {
+                $q->where('rater_id', $user->id);
+            }
         ])
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'rejected', 'cancelled', 'expired'])
             ->where(function ($query) use ($user) {
-
-                $query->where(
-                    'sender_id',
-                    $user->id
-                )
-                    ->orWhere(
-                        'receiver_id',
-                        $user->id
-                    );
+                $query->where('sender_id', $user->id)
+                      ->orWhere('receiver_id', $user->id);
             })
             ->latest()
             ->get();

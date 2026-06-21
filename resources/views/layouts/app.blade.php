@@ -6,7 +6,8 @@
     <title>{{ config('app.name', 'SwapSkill') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -14,9 +15,12 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        .font-fraunces {
+            font-family: 'Fraunces', serif;
+        }
     </style>
 </head>
-<body class="bg-linear-to-b from-slate-50 via-white to-slate-100 text-slate-900 antialiased">
+<body class="bg-[#F8FAFC] text-[#0F172A] antialiased">
     <div class="min-h-screen">
         @include('layouts.navigation')
 

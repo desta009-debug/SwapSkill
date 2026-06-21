@@ -24,7 +24,7 @@
 
                 <div class="relative z-10">
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
-                        <img src="{{ asset('images/logo.jpg') }}" alt="SwapSkill Logo" class="h-12 w-12 rounded-2xl object-cover ring-1 ring-white/20 shadow-lg">
+                        <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}" alt="SwapSkill Logo" class="h-12 w-12 rounded-2xl object-cover ring-1 ring-white/20 shadow-lg">
                         <div>
                             <h1 class="text-xl font-extrabold tracking-tight">SwapSkill</h1>
                             <p class="text-sm text-white/60">Tukar skill. Naik level.</p>
@@ -66,7 +66,7 @@
                 <div class="w-full max-w-md">
                     <div class="mb-6 flex flex-col items-center text-center lg:hidden">
                         <a href="{{ url('/') }}" class="inline-flex flex-col items-center gap-3">
-                            <img src="{{ asset('images/logo.jpg') }}" alt="SwapSkill Logo" class="h-14 w-14 rounded-2xl object-cover shadow-md">
+                            <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}" alt="SwapSkill Logo" class="h-14 w-14 rounded-2xl object-cover shadow-md">
                             <div>
                                 <h1 class="text-2xl font-extrabold text-white">SwapSkill</h1>
                                 <p class="text-sm text-white/60">Tukar skill. Naik level.</p>

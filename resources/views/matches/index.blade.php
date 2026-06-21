@@ -1,693 +1,165 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="py-2">
-            <p class="text-xs font-bold uppercase tracking-[0.3em]" style="color:#F68048;">SwapSkill</p>
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900" style="font-family:'Syne',sans-serif;">
-                Kecocokan Skill</h2>
-            <p class="mt-1 text-sm text-slate-400">Temukan orang yang cocok dengan tujuan belajarmu.</p>
-        </div>
-    </x-slot>
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8 relative">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
+        {{-- Background Elements for Glassmorphism --}}
+        <div class="absolute top-0 left-0 w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+        <div class="absolute top-40 right-20 w-[300px] h-[300px] bg-[#4F46E5]/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-        :root {
-            --tu-navy: #0D1A63;
-            --tu-mid: #1A2CA3;
-            --tu-blue: #2845D6;
-            --tu-orange: #F68048;
-            --tu-orange-dim: rgba(246, 128, 72, 0.10);
-            --tu-blue-dim: rgba(40, 69, 214, 0.08);
-        }
-
-        .tu-page {
-            font-family: 'Poppins', sans-serif;
-            background: var(--tu-navy);
-            color: #0F172A;
-        }
-
-        .tu-syne {
-            font-family: 'Syne', sans-serif;
-
-            color: #f7f8f9;
-
-        }
-
-        /* ── GRID BG ── */
-        .tu-grid-bg {
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none;
-        }
-
-        /* ── HERO ── */
-        .tu-hero {
-            background: var(--tu-navy);
-            position: relative;
-            overflow: hidden;
-            border-radius: 24px;
-            box-shadow: 0 24px 80px rgba(13, 26, 99, 0.25);
-        }
-
-        .tu-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 55% 55% at 85% -5%, rgba(40, 69, 214, 0.38) 0%, transparent 60%),
-                radial-gradient(ellipse 35% 40% at -5% 105%, rgba(246, 128, 72, 0.20) 0%, transparent 55%);
-            pointer-events: none;
-        }
-
-        .tu-hero-stat {
-            border-left: 3px solid var(--tu-orange);
-            padding-left: 1rem;
-        }
-
-        .tu-hero-stat-num {
-            font-family: 'Syne', sans-serif;
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1;
-        }
-
-        .tu-hero-stat-label {
-            font-size: 0.72rem;
-            color: rgba(255, 255, 255, 0.45);
-            margin-top: 6px;
-            line-height: 1.4;
-        }
-
-        .tu-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(40, 69, 214, 0.2), transparent);
-        }
-
-        /* ── TOAST ── */
-        .tu-toast {
-            border-radius: 12px;
-            border: 1.5px solid rgba(40, 69, 214, 0.2);
-            background: rgba(40, 69, 214, 0.06);
-            color: var(--tu-mid);
-            padding: 12px 18px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* ── MATCH CARD ── */
-        .tu-match-card {
-            background: #fff;
-            border: 1.5px solid #E4E7F5;
-            border-radius: 22px;
-            overflow: hidden;
-            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-            position: relative;
-        }
-
-        .tu-match-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 50px rgba(13, 26, 99, 0.10);
-            border-color: rgba(40, 69, 214, 0.25);
-        }
-
-        /* ── CARD HEADER ── */
-        .tu-card-header {
-            background: var(--tu-navy);
-            padding: 20px 22px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tu-card-header::after {
-            content: '';
-            position: absolute;
-            right: -24px;
-            top: -24px;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: rgba(246, 128, 72, 0.10);
-            pointer-events: none;
-        }
-
-        .tu-avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            flex-shrink: 0;
-        }
-
-        .tu-badge-mutual {
-            background: rgba(204, 234, 197, 0.15);
-            border: 1px solid rgba(87, 246, 72, 0.3);
-            color: var(--tu-green);
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        .tu-badge-potential {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: rgba(255, 255, 255, 0.65);
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.65rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-
-        /* ── CARD BODY ── */
-        .tu-card-body {
-            padding: 22px;
-        }
-
-        .tu-skill-block {
-            border-radius: 14px;
-            border: 1.5px solid;
-            padding: 16px;
-        }
-
-        .tu-skill-block-teach {
-            background: rgba(40, 69, 214, 0.04);
-            border-color: rgba(40, 69, 214, 0.14);
-        }
-
-        .tu-skill-block-want {
-            background: rgba(246, 128, 72, 0.04);
-            border-color: rgba(246, 128, 72, 0.16);
-        }
-
-        .tu-skill-block-reason {
-            background: #FAFBFF;
-            border-color: #E4E7F5;
-        }
-
-        .tu-block-label {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.18em;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            margin-bottom: 12px;
-        }
-
-        .tu-block-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 2px;
-            flex-shrink: 0;
-        }
-
-        .tu-skill-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 11px;
-            border-radius: 7px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            transition: transform 0.12s;
-        }
-
-        .tu-skill-chip:hover {
-            transform: translateY(-1px);
-        }
-
-        .tu-skill-chip-teach {
-            background: rgba(40, 69, 214, 0.07);
-            border: 1.5px solid rgba(40, 69, 214, 0.18);
-            color: var(--tu-mid);
-        }
-
-        .tu-skill-chip-want {
-            background: rgba(246, 128, 72, 0.07);
-            border: 1.5px solid rgba(246, 128, 72, 0.22);
-            color: #BF511A;
-        }
-
-        .tu-chip-level {
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 2px 5px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.7);
-        }
-
-        .tu-chip-level-teach {
-            color: var(--tu-blue);
-        }
-
-        .tu-chip-level-want {
-            color: var(--tu-orange);
-        }
-
-        .tu-empty-chip {
-            font-size: 0.8rem;
-            color: #94A3B8;
-            border: 1.5px dashed #D5D9EF;
-            border-radius: 10px;
-            padding: 10px 14px;
-        }
-
-        /* ── REASON BOX ── */
-        .tu-reason-item {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .tu-reason-icon {
-            width: 22px;
-            height: 22px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .tu-reason-icon svg {
-            width: 12px;
-            height: 12px;
-        }
-
-        /* ── WA BUTTON ── */
-        .tu-btn-wa {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #16A34A;
-            color: #fff;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.82rem;
-            padding: 10px 18px;
-            border-radius: 10px;
-            transition: background 0.2s, transform 0.15s;
-        }
-
-        .tu-btn-wa:hover {
-            background: #15803D;
-            transform: translateY(-1px);
-        }
-
-        .tu-btn-wa svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .tu-btn-wa-disabled {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #F1F5F9;
-            color: #94A3B8;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.82rem;
-            padding: 10px 18px;
-            border-radius: 10px;
-            cursor: not-allowed;
-        }
-
-        .tu-btn-outline {
-            display: inline-flex;
-            align-items: center;
-            color: var(--tu-blue);
-            border: 1.5px solid rgba(40, 69, 214, 0.25);
-            background: transparent;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.82rem;
-            padding: 10px 18px;
-            border-radius: 10px;
-            transition: background 0.2s, border-color 0.2s;
-        }
-
-        .tu-btn-outline:hover {
-            background: rgba(40, 69, 214, 0.05);
-            border-color: var(--tu-blue);
-        }
-
-        .tu-btn-primary {
-            display: inline-flex;
-            align-items: center;
-            background: var(--tu-orange);
-            color: #fff;
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.82rem;
-            padding: 10px 18px;
-            border-radius: 10px;
-            transition: background 0.2s;
-        }
-
-        .tu-btn-primary:hover {
-            background: #e36930;
-        }
-
-        /* ── EMPTY STATE ── */
-        .tu-empty-state {
-            background: var(--tu-navy);
-            border-radius: 22px;
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tu-empty-state::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(40, 69, 214, 0.4) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .tu-count-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(246, 128, 72, 0.12);
-            border: 1px solid rgba(246, 128, 72, 0.25);
-            color: var(--tu-orange);
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-    </style>
-
-    <div class="tu-page py-8">
-        <div class="mx-auto max-w-7xl space-y-7 px-4 sm:px-6 lg:px-8">
-
-            {{-- ── TOAST ── --}}
-            @if (session('success'))
-            <div class="tu-toast">{{ session('success') }}</div>
-            @endif
-
-            {{-- ════════════ HERO ════════════ --}}
-            <section class="tu-hero">
-                <div class="tu-grid-bg"></div>
-
-                <div class="relative grid gap-0 lg:grid-cols-[1.25fr_0.85fr] lg:items-stretch">
-
-                    {{-- LEFT --}}
-                    <div class="p-8 lg:p-10">
-                        <span class="tu-count-pill">
-                            <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                            Smart Matching
-                        </span>
-
-                        <h1
-                            class="tu-syne mt-5 text-4xl font-extrabold tracking-tight text-white leading-tight sm:text-5xl">
-                            Temukan partner<br>yang melengkapi<br>skill kamu<span
-                                style="color:var(--tu-orange);">.</span>
-                        </h1>
-
-                        <p class="mt-4 max-w-lg text-sm leading-7" style="color:rgba(255,255,255,0.55);">
-                            SwapSkill membandingkan skill dan level kemampuan secara dua arah —
-                            bukan cuma relevan secara topik, tapi masuk akal secara kemampuan.
-                        </p>
-
-                        <div class="mt-7 flex flex-wrap gap-3">
-                            <a href="{{ route('skills.edit') }}" class="tu-btn-primary">Perbarui Skill</a>
-                            <a href="{{ route('dashboard') }}"
-                                style="display:inline-flex;align-items:center;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.75);border:1.5px solid rgba(255,255,255,0.1);font-family:'Syne',sans-serif;font-weight:700;font-size:0.82rem;padding:10px 18px;border-radius:10px;transition:background 0.2s;">
-                                Lihat Dashboard
-                            </a>
-                        </div>
-                    </div>
-
-                    {{-- RIGHT — STATS --}}
-                    <div class="flex flex-col justify-center gap-5 border-l border-white/8 p-8 lg:p-10">
-                        <div class="tu-hero-stat">
-                            <div class="tu-hero-stat-num">{{ $matches->count() }}</div>
-                            <p class="tu-hero-stat-label">Total match<br>ditemukan</p>
-                        </div>
-                        <div class="tu-hero-stat">
-                            <div class="tu-hero-stat-num">{{ $matches->where('match_type','Mutual Match')->count() }}
-                            </div>
-                            <p class="tu-hero-stat-label">Match mutual<br>(2 arah)</p>
-                        </div>
-                        <div class="tu-hero-stat">
-                            <div class="tu-hero-stat-num">{{ $matches->where('match_type','Potential Match')->count() }}
-                            </div>
-                            <p class="tu-hero-stat-label">Match potensial<br>(1 arah)</p>
-                        </div>
-
-                        <div class="tu-divider my-1"></div>
-
-                        <div class="rounded-[12px] border border-white/8 bg-white/5 px-4 py-3">
-                            <p class="tu-syne text-xs font-bold uppercase tracking-[0.15em]"
-                                style="color:var(--tu-orange);">Logika Match</p>
-                            <p class="mt-1.5 text-sm font-semibold text-white">Skill + Level</p>
-                            <p class="mt-1 text-xs leading-5" style="color:rgba(255,255,255,0.4);">Level offer harus
-                                memenuhi atau melebihi level yang dibutuhkan.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {{-- ════════════ MATCH CARDS ════════════ --}}
-            @if ($errors->any())
-            <div class="tu-toast">
-                {{ $errors->first() }}
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#E2E8F0] pb-6">
+            <div>
+                <h1 class="font-fraunces text-3xl sm:text-4xl font-black text-[#0F172A] tracking-tight">
+                    Cari Partner <span class="text-[#10B981]">Match.</span>
+                </h1>
+                <p class="mt-2 text-sm sm:text-base text-[#64748B] max-w-2xl font-medium">Temukan partner yang bisa mengajarkan skill yang kamu butuhkan dan sebaliknya.</p>
             </div>
-            @endif
-            @if ($matches->count())
-            <section class="grid gap-6 xl:grid-cols-2">
-                @foreach ($matches as $match)
-                <article class="tu-match-card">
+            
+            <a href="{{ route('skills.edit') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 backdrop-blur-md border border-[#E2E8F0] shadow-sm text-sm font-bold rounded-xl text-[#0F172A] hover:bg-slate-50 hover:border-[#4F46E5]/30 transition-all hover:-translate-y-0.5">
+                <svg class="w-4 h-4 text-[#4F46E5]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                Perbarui Skill Kamu
+            </a>
+        </div>
 
-                    {{-- CARD HEADER --}}
-                    <div class="tu-card-header">
-                        <div class="relative flex items-start justify-between gap-4">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <img src="{{ $match['user']->profile_photo_url }}" alt="{{ $match['user']->name }}"
-                                    class="tu-avatar">
-                                <div class="min-w-0">
-                                    <p class="text-[10px] font-semibold uppercase tracking-[0.2em]"
-                                        style="color:rgba(255,255,255,0.4);">Yang Cocok Sama Kamu</p>
-                                    <h3 class="tu-syne mt-1 text-xl font-extrabold text-white truncate leading-tight">
-                                        {{ $match['user']->name }}
-                                    </h3>
-                                    <p class="mt-0.5 text-xs truncate" style="color:rgba(255,255,255,0.45);">
-                                        {{ $match['user']->email }}
-                                    </p>
-                                    @if (!empty($match['user']->phone))
-                                    <p class="mt-0.5 text-xs" style="color:rgba(255,255,255,0.35);">
-                                        WA: {{ $match['user']->phone }}
-                                    </p>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="shrink-0 mt-1">
-                                @if ($match['match_type'] === 'Mutual Match')
-                                <span class="tu-badge-mutual">Mutual</span>
-                                @else
-                                <span class="tu-badge-potential">Potensial</span>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- CARD BODY --}}
-                    <div class="tu-card-body space-y-4">
-
-                        {{-- SKILL YANG DIA BISA AJARKAN --}}
-                        <div class="tu-skill-block tu-skill-block-teach">
-                            <div class="tu-block-label" style="color:var(--tu-mid);">
-                                <span class="tu-block-dot" style="background:var(--tu-blue);"></span>
-                                Bisa dia ajarkan ke kamu
-                                <span class="ml-auto text-[10px] font-bold"
-                                    style="color:var(--tu-blue);background:rgba(40,69,214,0.08);border:1px solid rgba(40,69,214,0.15);padding:2px 8px;border-radius:5px;">
-                                    {{ $match['skills_they_can_teach_me']->count() }}
-                                </span>
-                            </div>
-
-                            @if ($match['skills_they_can_teach_me']->count())
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($match['skills_they_can_teach_me'] as $skill)
-                                <span class="tu-skill-chip tu-skill-chip-teach">
-                                    {{ $skill->name }}
-                                    <span class="tu-chip-level tu-chip-level-teach">{{ $skill->pivot->level }}</span>
-                                </span>
-                                @endforeach
-                            </div>
-                            @else
-                            <p class="tu-empty-chip">Belum ada kecocokan langsung untuk diajarkan ke kamu.</p>
-                            @endif
-                        </div>
-
-                        {{-- SKILL YANG DIA CARI DARI KAMU --}}
-                        <div class="tu-skill-block tu-skill-block-want">
-                            <div class="tu-block-label" style="color:#BF511A;">
-                                <span class="tu-block-dot" style="background:var(--tu-orange);"></span>
-                                Dia cari dari kamu
-                                <span class="ml-auto text-[10px] font-bold"
-                                    style="color:var(--tu-orange);background:rgba(246,128,72,0.08);border:1px solid rgba(246,128,72,0.2);padding:2px 8px;border-radius:5px;">
-                                    {{ $match['skills_they_want_from_me']->count() }}
-                                </span>
-                            </div>
-
-                            @if ($match['skills_they_want_from_me']->count())
-                            <div class="flex flex-wrap gap-2">
-                                @foreach ($match['skills_they_want_from_me'] as $skill)
-                                <span class="tu-skill-chip tu-skill-chip-want">
-                                    {{ $skill->name }}
-                                    <span class="tu-chip-level tu-chip-level-want">{{ $skill->pivot->level }}</span>
-                                </span>
-                                @endforeach
-                            </div>
-                            @else
-                            <p class="tu-empty-chip">Dia belum membutuhkan skill yang kamu tawarkan.</p>
-                            @endif
-                        </div>
-
-                        {{-- KENAPA MATCH INI COCOK --}}
-                        <div class="tu-skill-block tu-skill-block-reason">
-                            <div class="mb-3 flex items-center justify-between gap-3">
-                                <p class="tu-syne text-xs font-bold text-slate-700 uppercase tracking-[0.15em]">Kenapa
-                                    ini cocok</p>
-                                @if ($match['match_type'] === 'Mutual Match')
-                                <span
-                                    style="background:rgba(246,128,72,0.1);border:1px solid rgba(246,128,72,0.22);color:var(--tu-orange);font-family:'Syne',sans-serif;font-weight:700;font-size:0.65rem;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:0.1em;">
-                                    2 Arah
-                                </span>
-                                @else
-                                <span
-                                    style="background:rgba(40,69,214,0.06);border:1px solid rgba(40,69,214,0.15);color:var(--tu-mid);font-family:'Syne',sans-serif;font-weight:700;font-size:0.65rem;padding:3px 9px;border-radius:5px;text-transform:uppercase;letter-spacing:0.1em;">
-                                    1 Arah
-                                </span>
-                                @endif
-                            </div>
-
-                            <div class="space-y-3">
-                                @if ($match['skills_they_can_teach_me']->count())
-                                <div class="space-y-2">
-                                    @foreach ($match['skills_they_can_teach_me'] as $skill)
-                                    <div class="tu-reason-item">
-                                        <div class="tu-reason-icon" style="background:rgba(40,69,214,0.08);">
-                                            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M2 6h8M6 2l4 4-4 4" stroke="#2845D6" stroke-width="1.5"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                        </div>
-                                        <p class="text-xs leading-5 text-slate-600">
-                                            <span class="font-bold text-slate-900">{{ $skill->name }}</span>
-                                            level <span class="font-bold text-slate-900">{{
-                                                ucfirst($skill->pivot->level) }}</span>
-                                            — cocok dengan target belajarmu.
-                                        </p>
-                                    </div>
-                                    @endforeach
-                                </div>
-                                @endif
-
-                                @if ($match['skills_they_can_teach_me']->count() &&
-                                $match['skills_they_want_from_me']->count())
-                                <div
-                                    style="height:1px;background:linear-gradient(90deg,transparent,#E4E7F5,transparent);">
-                                </div>
-                                @endif
-
-                                @if ($match['skills_they_want_from_me']->count())
-                                <div class="space-y-2">
-                                    @foreach ($match['skills_they_want_from_me'] as $skill)
-                                    <div class="tu-reason-item">
-                                        <div class="tu-reason-icon" style="background:rgba(246,128,72,0.08);">
-                                            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M10 6H2M6 10 2 6l4-4" stroke="#F68048" stroke-width="1.5"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                        </div>
-                                        <p class="text-xs leading-5 text-slate-600">
-                                            Dia butuh <span class="font-bold text-slate-900">{{ $skill->name }}</span>
-                                            level <span class="font-bold text-slate-900">{{
-                                                ucfirst($skill->pivot->level) }}</span>
-                                            — dan profilmu cocok untuk itu.
-                                        </p>
-                                    </div>
-                                    @endforeach
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        <form action="{{ route('swap.store') }}" method="POST" class="space-y-3">
-                            @csrf
-
-                            <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
-
-                            <textarea name="message" rows="2" placeholder="Tulis pesan singkat..."
-                                class="w-full rounded-lg border border-slate-200 text-sm"></textarea>
-
-                            <button type="submit" class="tu-btn-primary">
-                                Request Swap
-                            </button>
-                        </form>
-
-                    </div>
-                </article>
-                @endforeach
-            </section>
-
-            @else
-            {{-- ════ EMPTY STATE ════ --}}
-            <section class="tu-empty-state">
-                <div class="tu-grid-bg"></div>
-                <div class="relative">
-                    <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-[18px]"
-                        style="background:rgba(246,128,72,0.12);border:1.5px solid rgba(246,128,72,0.2);">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                            stroke="#F68048" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+        @if(session('success'))
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl shadow-sm">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                         </svg>
                     </div>
-
-                    <h3 class="tu-syne text-2xl font-extrabold text-white">Belum ada match ditemukan</h3>
-
-                    <p class="mx-auto mt-3 max-w-md text-sm leading-7" style="color:rgba(255,255,255,0.45);">
-                        Lengkapi profil skill kamu dengan jenis skill dan levelnya — sistem butuh data itu untuk
-                        menemukan kecocokan yang akurat.
-                    </p>
-
-                    <div class="mt-7 flex flex-wrap justify-center gap-3">
-                        <a href="{{ route('skills.edit') }}" class="tu-btn-primary">Perbarui Skill Saya</a>
-                        <a href="{{ route('dashboard') }}" class="tu-btn-outline"
-                            style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);">
-                            Kembali ke Dashboard
-                        </a>
+                    <div class="ml-3">
+                        <p class="text-sm font-bold text-emerald-800">{{ session('success') }}</p>
                     </div>
                 </div>
-            </section>
-            @endif
+            </div>
+        @endif
 
-        </div>
+        @if(session('error'))
+            <div class="bg-red-50 border border-red-200 p-4 rounded-xl shadow-sm">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-bold text-red-800">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(count($matches) > 0)
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($matches as $match)
+                    <div class="group bg-white/80 backdrop-blur-xl rounded-[24px] shadow-sm border border-[#E2E8F0] hover:shadow-lg hover:border-[#4F46E5]/30 transition-all duration-300 flex flex-col overflow-hidden relative">
+                        
+                        {{-- Card Header --}}
+                        <div class="p-6 border-b border-[#E2E8F0] bg-slate-50/50 relative">
+                            {{-- Match Percentage Badge --}}
+                            <div class="absolute top-4 right-4">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider {{ $match['match_type'] === 'Mutual Match' ? 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'bg-[#4F46E5]/10 text-[#4F46E5] border border-[#4F46E5]/20 shadow-[0_0_10px_rgba(79,70,229,0.2)]' }}">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                    {{ $match['match_type'] }}
+                                </span>
+                            </div>
+
+                            <div class="flex items-start gap-4 pr-20">
+                                <img src="{{ $match['user']->profile_photo_url }}" alt="{{ $match['user']->name }}" class="w-14 h-14 rounded-[16px] object-cover shadow-sm border-2 border-white">
+                                <div>
+                                    <h3 class="font-fraunces text-lg font-bold text-[#0F172A] leading-tight group-hover:text-[#4F46E5] transition-colors">{{ $match['user']->name }}</h3>
+                                    <div class="flex items-center gap-1 mt-1.5 text-xs font-bold text-[#F97316]">
+                                        ⭐ {{ number_format($match['user']->received_ratings_avg_rating ?? 0, 1) }}
+                                        <span class="text-[#64748B] font-medium ml-1">({{ $match['user']->received_ratings_count ?? 0 }} ulasan)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {{-- Card Body --}}
+                        <div class="p-6 flex-1 space-y-6 bg-white/40">
+                            
+                            {{-- Matching Wants --}}
+                            <div>
+                                <p class="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span> Dia ingin belajar
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($match['skills_they_want_from_me'] as $want)
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 shadow-sm">
+                                            {{ $want->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            {{-- Matching Offers --}}
+                            <div>
+                                <p class="text-xs font-bold text-[#64748B] uppercase tracking-wider mb-3 flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#F97316]"></span> Dia bisa mengajarkan
+                                </p>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($match['skills_they_can_teach_me'] as $offer)
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-bold bg-[#F97316]/10 text-[#EA580C] border border-[#F97316]/20 shadow-sm">
+                                            {{ $offer->name }}
+                                        </span>
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                            {{-- User Insight --}}
+                            @if(isset($match['explanation']) && $match['explanation'])
+                                <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-indigo-50/50 to-purple-50/50 border border-indigo-100/50">
+                                    <div class="flex items-start gap-3">
+                                        <div class="mt-0.5 p-1.5 rounded-lg bg-indigo-100/80 text-indigo-600">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-indigo-900 uppercase tracking-wider mb-1">User Insight</p>
+                                            <p class="text-sm text-slate-700 leading-relaxed font-medium">
+                                                {{ $match['explanation'] }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                            
+                        </div>
+                        
+                        {{-- Card Footer --}}
+                        <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
+                            <form action="{{ route('swap.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#4F46E5] to-[#4338CA] hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all transform group-hover:scale-[1.02]">
+                                    Kirim Request Swap
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-sm border border-[#E2E8F0] p-12 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -z-10"></div>
+                <svg class="mx-auto h-20 w-20 text-[#64748B]/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <h3 class="mt-6 font-fraunces text-2xl font-bold text-[#0F172A]">Belum ada Match</h3>
+                <p class="mt-3 text-[#64748B] text-base max-w-md mx-auto">
+                    Kami belum menemukan pengguna yang cocok dengan profil kamu saat ini. Coba tambahkan lebih banyak skill untuk memperbesar peluang.
+                </p>
+                <div class="mt-8">
+                    <a href="{{ route('skills.edit') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white text-sm font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-[#F97316]/30">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        Tambah Skill Baru
+                    </a>
+                </div>
+            </div>
+        @endif
+
     </div>
 </x-app-layout>

@@ -45,4 +45,11 @@ class SkillSwap extends Model
             Rating::class
         );
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(
+            Message::class
+        );
+    }
 }

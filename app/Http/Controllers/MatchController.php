@@ -41,6 +41,8 @@ class MatchController extends Controller
             'offeredSkills',
             'wantedSkills',
         ])
+            ->withAvg('receivedRatings', 'rating')
+            ->withCount('receivedRatings')
             ->where('id', '!=', $currentUser->id)
             ->get();
 
@@ -88,6 +90,11 @@ class MatchController extends Controller
                 'skills_they_want_from_me' => $skillsTheyWantFromMe,
                 'match_type' => $matchType,
                 'score' => $this->matchService->calculateScore(
+                    $skillsTheyCanTeachMe,
+                    $skillsTheyWantFromMe,
+                    $matchType
+                ),
+                'explanation' => $this->matchService->generateExplanation(
                     $skillsTheyCanTeachMe,
                     $skillsTheyWantFromMe,
                     $matchType

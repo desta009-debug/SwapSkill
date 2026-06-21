@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
@@ -14,6 +15,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
     Route::get('/skills/edit', [SkillController::class, 'edit'])->name('skills.edit');
     Route::post('/skills/update', [SkillController::class, 'update'])->name('skills.update');
@@ -52,6 +54,21 @@ Route::middleware(['auth'])->group(function () {
         '/swaps/history',
         [SkillSwapController::class, 'history']
     )->name('swaps.history');
+
+    Route::get('/messages', [\App\Http\Controllers\ChatController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{skillSwap}', [\App\Http\Controllers\ChatController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{skillSwap}', [\App\Http\Controllers\ChatController::class, 'store'])->name('messages.store');
+    Route::get('/messages/{skillSwap}/fetch', [\App\Http\Controllers\ChatController::class, 'fetch'])->name('messages.fetch');
+    // Public Profile
+    Route::get('/user/{user}', [App\Http\Controllers\PublicProfileController::class, 'show'])->name('user.show');
+
+    // Talent Showcase (Portfolio)
+    Route::resource('portfolio', App\Http\Controllers\PortfolioController::class);
+
+    // Certifications
+    Route::post('/certifications', [App\Http\Controllers\CertificationController::class, 'store'])->name('certifications.store');
+    Route::delete('/certifications/{certification}', [App\Http\Controllers\CertificationController::class, 'destroy'])->name('certifications.destroy');
+
 });
 
 require __DIR__ . '/auth.php';

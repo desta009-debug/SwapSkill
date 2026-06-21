@@ -49,4 +49,28 @@ class MatchService
         return $levelRank[$offerLevel]
             >= $levelRank[$wantedLevel];
     }
+
+    public function generateExplanation(
+        Collection $skillsTheyCanTeachMe,
+        Collection $skillsTheyWantFromMe,
+        string $matchType
+    ): string {
+        $offers = $skillsTheyCanTeachMe->isNotEmpty();
+        $wants = $skillsTheyWantFromMe->isNotEmpty();
+
+        $teachNames = $skillsTheyCanTeachMe->pluck('name')->implode(', ');
+        $wantNames = $skillsTheyWantFromMe->pluck('name')->implode(', ');
+
+        if ($offers && $wants) {
+            $explanation = "Kecocokan yang sangat baik karena adanya peluang pertukaran skill. Kamu bisa mengajarkan {$wantNames} sambil belajar {$teachNames}.";
+        } elseif ($offers) {
+            $explanation = "Kecocokan yang bagus karena partner ini memiliki skill yang kamu cari. Mereka bisa membantumu belajar {$teachNames}.";
+        } elseif ($wants) {
+            $explanation = "Kecocokan yang potensial. Kamu bisa berkontribusi membantu pengguna ini dengan mengajarkan {$wantNames}, serta membangun koneksi yang berharga.";
+        } else {
+            return "Belum ada kecocokan skill secara langsung berdasarkan profilmu saat ini. Coba tambahkan lebih banyak skill yang kamu tawarkan atau butuhkan.";
+        }
+
+        return $explanation;
+    }
 }

@@ -79,7 +79,7 @@ class User extends Authenticatable
             return asset('storage/' . $this->profile_photo);
         }
 
-        return asset('image/default-profile.jpg');
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=4F46E5&background=EEF2FF';
     }
     public function sentRequests(): HasMany
     {
@@ -96,7 +96,32 @@ class User extends Authenticatable
             'receiver_id'
         );
     }
+
+    public function completedSentSwaps(): HasMany
+    {
+        return $this->sentRequests()->where('status', 'completed');
+    }
+
+    public function completedReceivedSwaps(): HasMany
+    {
+        return $this->receivedRequests()->where('status', 'completed');
+    }
+
     public function receivedRatings()
+    {
+        return $this->hasMany(Rating::class, 'rated_user_id');
+    }
+
+    public function portfolios()
+    {
+        return $this->hasMany(Portfolio::class);
+    }
+
+    public function certifications()
+    {
+        return $this->hasMany(Certification::class);
+    }
+    public function receivedRatingsForUser()
     {
         return $this->hasMany(
             Rating::class,
@@ -111,4 +136,13 @@ class User extends Authenticatable
             'rater_id'
         );
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(
+            Message::class,
+            'sender_id'
+        );
+    }
+
 }

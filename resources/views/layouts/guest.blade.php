@@ -6,7 +6,8 @@
     <title>{{ config('app.name', 'SwapSkill') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -14,9 +15,12 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        .font-fraunces {
+            font-family: 'Fraunces', serif;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-linear-to-br from-[#0b1020] via-[#151a33] to-[#1e1b4b] text-white antialiased">
+<body class="min-h-screen bg-brand-gradient text-white antialiased">
     <div class="relative min-h-screen overflow-hidden">
         <div class="absolute inset-0 opacity-30">
             <div class="absolute -left-10 top-10 h-40 w-40 rounded-full bg-violet-500 blur-3xl"></div>
@@ -28,7 +32,7 @@
                 <div class="mx-auto flex max-w-7xl items-center justify-between">
                     <a href="{{ url('/') }}" class="inline-flex items-center gap-3">
                         <img
-                            src="{{ asset('images/logo.jpg') }}"
+                            src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}"
                             alt="SwapSkill Logo"
                             class="h-11 w-11 rounded-2xl object-cover ring-1 ring-white/20 shadow-lg"
                         >

@@ -229,7 +229,7 @@
                 <div class="l-grid-bg"></div>
 
                 <a href="{{ url('/') }}" class="l-logo">
-                    <img src="{{ asset('images/logo.jpg') }}" alt="SwapSkill Logo">
+                    <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}" alt="SwapSkill Logo">
                     <div>
                         <p class="l-logo-name">SwapSkill</p>
                         <p class="l-logo-sub">Tukar skill. Naik level.</p>
@@ -257,7 +257,7 @@
                     {{-- Mobile logo --}}
                     <div class="l-mob-logo">
                         <a href="{{ url('/') }}">
-                            <img src="{{ asset('images/logo.jpg') }}" alt="SwapSkill Logo">
+                            <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}" alt="SwapSkill Logo">
                         </a>
                         <p class="l-mob-logo-name">SwapSkill</p>
                         <p class="l-mob-logo-sub">Tukar skill. Naik level.</p>
