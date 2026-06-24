@@ -1,260 +1,401 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SwapSkill - Platform Tukar Keahlian Premium</title>
+    <title>SwapSkill - Bursa Tukar Keahlian</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;9..144,900&display=swap" rel="stylesheet">
-</head>
-<body class="antialiased font-sans text-[#0F172A] selection:bg-[#F97316]/30 selection:text-[#0F172A] bg-gradient-to-b from-[#F8FAFC] via-[#EFF6FF] to-[#FFFBF7] overflow-x-hidden">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #101A30;
+            --bg-soft: #15223E;
+            --ink: #F5F7FA;
+            --muted: #98A4B5;
+            --accent: #2FD4C4;
+            --accent-2: #F2B134;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-strong: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.14);
+        }
 
-    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-sm">
+        body {
+            background: var(--bg);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .font-mono-tix {
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-weight: 700;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .glass-strong {
+            background: var(--glass-strong);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .inset-highlight {
+            box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.16), 0 30px 60px -25px rgba(0, 0, 0, 0.65);
+        }
+
+        .glow {
+            background:
+                radial-gradient(ellipse 70% 60% at 80% 20%, rgba(47, 212, 196, 0.30) 0%, transparent 65%),
+                radial-gradient(ellipse 55% 55% at 20% 80%, rgba(242, 177, 52, 0.20) 0%, transparent 60%);
+        }
+
+        .dot-grid {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+            background-size: 26px 26px;
+        }
+    </style>
+</head>
+
+<body class="antialiased font-sans text-[#F5F7FA] selection:bg-[#2FD4C4]/30 selection:text-[#F5F7FA]">
+
+    <nav class="fixed w-full z-50 glass border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}" alt="SwapSkill Logo" class="w-10 h-10 rounded-xl object-cover shadow-sm border border-[#E2E8F0]">
-                    <span class="font-fraunces font-black text-2xl tracking-tight text-[#0F172A]">Swap<span class="text-[#F97316]">Skill</span></span>
+                    <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}"
+                        alt="SwapSkill Logo" class="w-10 h-10 rounded-xl object-cover border border-white/15">
+                    <span class="font-display font-bold text-xl tracking-tight">Swap<span
+                            class="text-[#2FD4C4]">Skill</span></span>
                 </div>
-                <div class="hidden md:flex space-x-8 items-center font-bold text-sm text-[#475569]">
-                    <a href="#features" class="hover:text-[#4F46E5] transition">Fitur</a>
-                    <a href="#how-it-works" class="hover:text-[#4F46E5] transition">Cara Kerja</a>
-                    <a href="#testimonials" class="hover:text-[#4F46E5] transition">Testimoni</a>
+                <div
+                    class="hidden md:flex space-x-8 items-center font-mono-tix text-xs uppercase tracking-widest text-[#98A4B5]">
+                    <a href="#fitur" class="hover:text-[#2FD4C4] transition">Fitur</a>
+                    <a href="#cara-kerja" class="hover:text-[#2FD4C4] transition">Cara Kerja</a>
+                    <a href="#testimoni" class="hover:text-[#2FD4C4] transition">Testimoni</a>
                 </div>
                 <div class="flex items-center space-x-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="font-bold text-sm text-[#0F172A] hover:text-[#4F46E5] transition">Dashboard</a>
+                    <a href="{{ url('/dashboard') }}"
+                        class="font-mono-tix text-xs uppercase tracking-widest font-bold hover:text-[#2FD4C4] transition">Dashboard</a>
                     @else
-                        <a href="{{ route('login') }}" class="font-bold text-sm text-[#0F172A] hover:text-[#4F46E5] transition">Log in</a>
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="font-bold text-sm px-5 py-2.5 rounded-xl bg-[#0F172A] text-white hover:bg-[#4F46E5] transition shadow-lg hover:shadow-[#4F46E5]/30 transform hover:-translate-y-0.5">Mulai Gratis</a>
-                        @endif
+                    <a href="{{ route('login') }}"
+                        class="hidden sm:inline font-mono-tix text-xs uppercase tracking-widest text-[#98A4B5] hover:text-[#F5F7FA] transition">Log
+                        in</a>
+                    @if (Route::has('register'))
+                    <a href="{{ route('register') }}"
+                        class="font-mono-tix text-xs uppercase tracking-widest font-bold px-5 py-2.5 rounded-xl bg-gradient-to-br from-[#F2B134] to-[#2FD4C4] text-[#06241F] shadow-lg shadow-[#2FD4C4]/30 hover:brightness-110 transition transform hover:-translate-y-0.5">Gabung
+                        Gratis</a>
+                    @endif
                     @endauth
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="relative overflow-hidden pt-24">
-        <div class="absolute -left-24 top-24 w-72 h-72 rounded-full bg-[#4F46E5]/15 blur-3xl"></div>
-        <div class="absolute right-0 top-40 w-96 h-96 rounded-full bg-[#F97316]/15 blur-3xl"></div>
-        <div class="absolute left-1/2 top-[35rem] w-96 h-96 rounded-full bg-[#10B981]/15 blur-3xl"></div>
+    <main class="pt-20">
+        <section class="relative overflow-hidden">
+            <div class="absolute inset-0 dot-grid pointer-events-none"></div>
+            <div
+                class="absolute -top-48 left-1/2 -translate-x-1/2 w-[760px] h-[760px] glow blur-3xl pointer-events-none">
+            </div>
 
-        <section class="relative z-10 px-4 sm:px-6 lg:px-8">
-            <div class="mx-auto grid gap-10 lg:grid-cols-[1.05fr_0.95fr] items-center max-w-7xl">
+            <div
+                class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid gap-14 lg:grid-cols-[1.05fr_0.95fr] items-center">
                 <div class="space-y-8">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[#4F46E5] text-sm font-bold uppercase tracking-wider shadow-sm">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#F97316] animate-pulse"></span>
-                        Bangun Skill, Dapatkan Partner
+                    <div
+                        class="inline-flex items-center gap-2 font-mono-tix text-xs uppercase tracking-widest text-[#2FD4C4]">
+                        <span class="w-2 h-2 rounded-full bg-[#2FD4C4] animate-pulse"></span>
+                        Live Exchange — Real-time
                     </div>
 
-                    <h1 class="text-5xl md:text-6xl xl:text-7xl font-black tracking-tight text-[#0F172A] leading-tight">
-                        Tukar keahlianmu dan <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4F46E5] to-[#F97316]">kembangkan portofolio</span> bersama komunitas.
+                    <h1
+                        class="font-display font-bold text-5xl md:text-6xl xl:text-[64px] leading-[1.08] tracking-tight">
+                        Tempat skill <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#2FD4C4] to-[#F2B134]">bertemu skill</span>, bukan sekadar listing.
                     </h1>
 
-                    <p class="max-w-2xl text-lg md:text-xl text-[#475569] leading-relaxed font-medium">
-                        SwapSkill mempermudah kamu mencari partner belajar, berbagi skill, dan menciptakan kolaborasi nyata tanpa biaya.
+                    <p class="max-w-xl text-lg text-[#98A4B5] leading-relaxed">
+                        SwapSkill menghubungkan kamu dengan orang yang punya skill yang kamu butuhkan — dan butuh skill
+                        yang kamu punya. Tanpa biaya, tanpa drama, langsung match.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row gap-4 sm:items-center">
-                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-gradient-to-r from-[#4F46E5] to-[#4338CA] text-white font-bold text-base shadow-xl shadow-[#4F46E5]/30 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center justify-center px-7 py-4 rounded-xl bg-gradient-to-br from-[#F2B134] to-[#2FD4C4] text-[#06241F] font-bold text-sm shadow-lg shadow-[#2FD4C4]/30 hover:brightness-110 transition transform hover:-translate-y-0.5">
                             Mulai Sekarang
                         </a>
-                        <a href="#how-it-works" class="inline-flex items-center justify-center px-8 py-4 rounded-2xl bg-white/90 backdrop-blur-md border border-[#E2E8F0] text-[#0F172A] font-bold text-base hover:bg-white hover:shadow-md transition-all duration-300">
-                            Pelajari Cara Kerja
+                        <a href="#cara-kerja"
+                            class="inline-flex items-center justify-center px-7 py-4 rounded-xl glass text-[#F5F7FA] font-semibold text-sm hover:bg-white/10 transition">
+                            Lihat Cara Kerja
                         </a>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
-                        <div class="bg-white/80 backdrop-blur-md rounded-3xl border border-white/60 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-                            <p class="text-3xl font-fraunces font-black text-[#4F46E5]">5K+</p>
-                            <p class="text-xs uppercase tracking-[0.24em] text-[#64748B] mt-3">Pengguna</p>
-                        </div>
-                        <div class="bg-white/80 backdrop-blur-md rounded-3xl border border-white/60 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-                            <p class="text-3xl font-fraunces font-black text-[#F97316]">10K+</p>
-                            <p class="text-xs uppercase tracking-[0.24em] text-[#64748B] mt-3">Match Sukses</p>
-                        </div>
-                        <div class="bg-white/80 backdrop-blur-md rounded-3xl border border-white/60 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-                            <p class="text-3xl font-fraunces font-black text-[#10B981]">500+</p>
-                            <p class="text-xs uppercase tracking-[0.24em] text-[#64748B] mt-3">Kategori Skill</p>
-                        </div>
-                        <div class="bg-white/80 backdrop-blur-md rounded-3xl border border-white/60 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-                            <p class="text-3xl font-fraunces font-black text-[#0F172A]">100%</p>
-                            <p class="text-xs uppercase tracking-[0.24em] text-[#64748B] mt-3">Gratis</p>
+                    <div class="glass rounded-2xl p-5">
+                        <div
+                            class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 font-mono-tix text-center sm:text-left">
+                            <div class="px-2 sm:px-4">
+                                <p class="text-2xl font-bold">5.000+</p>
+                                <p class="text-[10px] uppercase tracking-widest text-[#98A4B5] mt-1">Pengguna Aktif
+                                </p>
+                            </div>
+                            <div class="px-2 sm:px-4">
+                                <p class="text-2xl font-bold">10.200+</p>
+                                <p class="text-[10px] uppercase tracking-widest text-[#98A4B5] mt-1">Match Sukses
+                                </p>
+                            </div>
+                            <div class="px-2 sm:px-4">
+                                <p class="text-2xl font-bold">500+</p>
+                                <p class="text-[10px] uppercase tracking-widest text-[#98A4B5] mt-1">Kategori Skill
+                                </p>
+                            </div>
+                            <div class="px-2 sm:px-4">
+                                <p class="text-2xl font-bold">Rp0</p>
+                                <p class="text-[10px] uppercase tracking-widest text-[#98A4B5] mt-1">Biaya Selamanya</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="rounded-[40px] bg-white/85 backdrop-blur-xl border border-white/60 shadow-[0_25px_80px_rgba(15,23,42,0.14)] p-10">
-                        <p class="text-sm uppercase tracking-[0.24em] font-bold text-[#4F46E5] mb-4">Skill Marketplace</p>
-                        <h2 class="text-3xl font-black text-[#0F172A] leading-tight">Terhubung dengan partner belajar yang tepat.</h2>
-                        <p class="mt-4 text-[#64748B]">Jelajahi tawaran skill dan temukan orang yang ingin belajar hal yang kamu kuasai.</p>
-                        <div class="mt-6 grid gap-4">
-                            <div class="flex items-center gap-3 p-4 rounded-3xl bg-[#eef2ff]/80 border border-[#c7d2fe]/60 shadow-sm">
-                                <div class="w-12 h-12 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center text-lg font-black">A</div>
-                                <div>
-                                    <p class="font-bold text-[#0F172A]">Cari Mentor</p>
-                                    <p class="text-sm text-[#64748B]">Temukan partner belajar berdasarkan skill dan tujuanmu.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-4 rounded-3xl bg-[#ffedd5]/80 border border-[#fed7aa]/60 shadow-sm">
-                                <div class="w-12 h-12 rounded-2xl bg-[#F97316]/10 text-[#F97316] flex items-center justify-center text-lg font-black">B</div>
-                                <div>
-                                    <p class="font-bold text-[#0F172A]">Tawarkan Keahlian</p>
-                                    <p class="text-sm text-[#64748B]">Bangun reputasi lewat project dan portfolio nyata.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-3 p-4 rounded-3xl bg-[#ecfdf5]/80 border border-[#bbf7d0]/60 shadow-sm">
-                                <div class="w-12 h-12 rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center text-lg font-black">C</div>
-                                <div>
-                                    <p class="font-bold text-[#0F172A]">Mulai Diskusi</p>
-                                    <p class="text-sm text-[#64748B]">Lakukan percakapan awal dan atur swap skill dengan mudah.</p>
-                                </div>
-                            </div>
-                        </div>
+                <div class="glass-strong inset-highlight rounded-2xl overflow-hidden max-w-md mx-auto lg:mx-0 w-full">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10">
+                        <span class="w-3 h-3 rounded-full bg-[#FF5F57]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#FEBC2E]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#28C840]"></span>
+                        <span
+                            class="ml-3 font-mono-tix text-[11px] text-white/40 uppercase tracking-widest">live-exchange.feed</span>
                     </div>
-
-                    <div class="rounded-[40px] bg-gradient-to-br from-[#4F46E5]/10 via-white/80 to-[#F97316]/10 border border-white/60 backdrop-blur-xl shadow-[0_20px_60px_rgba(79,70,229,0.12)] p-10">
-                        <div class="flex items-center justify-between gap-4">
-                            <div>
-                                <p class="text-xs uppercase tracking-[0.24em] text-[#475569]">Komunitas</p>
-                                <h3 class="mt-3 text-2xl font-black text-[#0F172A]">Rasakan dukungan langsung.</h3>
+                    <div class="p-4 space-y-3">
+                        <div
+                            class="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-white/[0.03] border border-white/5">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-[#2FD4C4]/15 text-[#2FD4C4] flex items-center justify-center font-mono-tix text-xs font-bold border border-[#2FD4C4]/30">
+                                    UX</div>
+                                <div>
+                                    <p class="text-sm font-semibold">UI/UX <span class="text-white/30">⇄</span> Public
+                                        Speaking</p>
+                                    <p class="text-[11px] text-white/40 font-mono-tix">Dian &amp; Bagas — baru saja</p>
+                                </div>
                             </div>
-                            <span class="inline-flex items-center justify-center rounded-full bg-[#4F46E5]/10 text-[#4F46E5] px-4 py-2 text-sm font-bold">Top Rated</span>
+                            <span class="w-2 h-2 rounded-full bg-[#28C840]"></span>
                         </div>
-                        <p class="mt-5 text-[#64748B]">Bergabung dengan komunitas yang saling bantu belajar dan memberikan feedback profesional.</p>
-                        <div class="mt-6 grid gap-3">
-                            <div class="rounded-3xl bg-white/90 p-4 border border-white/80 shadow-sm">
-                                <p class="text-sm text-[#0F172A] font-bold">“SwapSkill membuat proses belajar lebih fokus dan tepat sasaran.”</p>
-                                <p class="mt-3 text-xs text-[#64748B] uppercase tracking-[0.18em]">Dian, UI/UX Designer</p>
+                        <div
+                            class="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-white/[0.03] border border-white/5">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-[#F2B134]/15 text-[#F2B134] flex items-center justify-center font-mono-tix text-xs font-bold border border-[#F2B134]/30">
+                                    XL</div>
+                                <div>
+                                    <p class="text-sm font-semibold">Excel <span class="text-white/30">⇄</span>
+                                        Fotografi Produk</p>
+                                    <p class="text-[11px] text-white/40 font-mono-tix">Sinta &amp; Reza — 4 menit lalu
+                                    </p>
+                                </div>
                             </div>
-                            <div class="rounded-3xl bg-white/90 p-4 border border-white/80 shadow-sm">
-                                <p class="text-sm text-[#0F172A] font-bold">“Koneksi mentor dan kolaborasi skill jadi lebih mudah.”</p>
-                                <p class="mt-3 text-xs text-[#64748B] uppercase tracking-[0.18em]">Rafi, Backend Developer</p>
+                            <span class="w-2 h-2 rounded-full bg-[#28C840]"></span>
+                        </div>
+                        <div
+                            class="flex items-center justify-between gap-3 px-3 py-3 rounded-xl bg-white/[0.03] border border-white/5">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-white/10 text-[#2FD4C4] flex items-center justify-center font-mono-tix text-xs font-bold border border-white/15">
+                                    DV</div>
+                                <div>
+                                    <p class="text-sm font-semibold">Laravel <span class="text-white/30">⇄</span>
+                                        Copywriting</p>
+                                    <p class="text-[11px] text-white/40 font-mono-tix">Rafi &amp; Putri — 12 menit lalu
+                                    </p>
+                                </div>
                             </div>
+                            <span class="w-2 h-2 rounded-full bg-[#FEBC2E]"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="features" class="relative mt-24 py-24">
+        <section id="fitur" class="relative py-24">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mx-auto max-w-2xl">
-                    <p class="text-sm uppercase tracking-[0.24em] text-[#475569] font-bold">Fitur Unggulan</p>
-                    <h2 class="mt-4 text-4xl font-black text-[#0F172A]">Semua tools yang kamu butuhkan untuk belajar dan berbagi.</h2>
-                    <p class="mt-4 text-[#64748B] leading-relaxed">Mulai dari pencocokan skill hingga manajemen portfolio, semua dirancang agar pengalamanmu jadi lebih lancar dan efektif.</p>
+                <div class="max-w-2xl">
+                    <p class="font-mono-tix text-xs uppercase tracking-widest text-[#2FD4C4]">Fitur</p>
+                    <h2 class="mt-3 font-display font-bold text-3xl md:text-4xl">Dibangun buat orang yang serius
+                        belajar.</h2>
+                    <p class="mt-4 text-[#98A4B5] leading-relaxed">Tiga komponen inti yang bikin proses tukar skill
+                        terasa rapi dan bisa dipertanggungjawabkan.</p>
                 </div>
 
                 <div class="mt-12 grid gap-6 md:grid-cols-3">
-                    <div class="rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] mb-6 shadow-sm">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Match pintar</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Algoritma cerdas membantu menemukan partner yang paling sesuai dengan skill dan tujuanmu.</p>
+                    <div class="glass rounded-2xl p-8 hover:border-[#2FD4C4]/40 transition">
+                        <div
+                            class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#2FD4C4]/15 text-[#2FD4C4] border border-[#2FD4C4]/30 font-mono-tix font-bold text-sm">
+                            MT</div>
+                        <h3 class="mt-6 text-xl font-display font-bold">Match yang relevan</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Sistem nyocokin kamu sama orang yang
+                            skill-nya saling melengkapi, bukan asal tebak dari kata kunci.</p>
                     </div>
-                    <div class="rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#F97316]/10 text-[#F97316] mb-6 shadow-sm">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2 9 3.343 9 5s1.343 3 3 3zm0 2c-2.485 0-4.5 2.015-4.5 4.5V19h9v-4.5C16.5 12.015 14.485 10 12 10z" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Portfolio kuat</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Simpan semua hasil kerja dan review di satu profil yang mudah dibagikan.</p>
+                    <div class="glass rounded-2xl p-8 hover:border-[#F2B134]/40 transition">
+                        <div
+                            class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#F2B134]/15 text-[#F2B134] border border-[#F2B134]/30 font-mono-tix font-bold text-sm">
+                            PF</div>
+                        <h3 class="mt-6 text-xl font-display font-bold">Portofolio yang kebukti</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Setiap swap yang kelar otomatis nambah rekam
+                            jejak di profilmu, lengkap dengan review dari partner belajar.</p>
                     </div>
-                    <div class="rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#10B981]/10 text-[#10B981] mb-6 shadow-sm">
-                            <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h8m-8 4h4m-4-8h8M6 18h12" /></svg>
-                        </div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Diskusi langsung</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Mulai percakapan dan rencanakan swap skill tanpa hambatan.</p>
+                    <div class="glass rounded-2xl p-8 hover:border-white/30 transition">
+                        <div
+                            class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 text-[#F5F7FA] border border-white/15 font-mono-tix font-bold text-sm">
+                            DK</div>
+                        <h3 class="mt-6 text-xl font-display font-bold">Obrolan tanpa drama</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Nego waktu, materi, sampai ekspektasi
+                            langsung di chat. Nggak perlu nunggu admin approve dulu.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="how-it-works" class="relative pb-24">
+        <section id="cara-kerja" class="relative py-24 border-y border-white/10 bg-[#15223E]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mx-auto max-w-2xl">
-                    <p class="text-sm uppercase tracking-[0.24em] text-[#475569] font-bold">Bagaimana Cara Kerja</p>
-                    <h2 class="mt-4 text-4xl font-black text-[#0F172A]">3 langkah mudah untuk mulai swap skill.</h2>
+                <div class="max-w-2xl">
+                    <p class="font-mono-tix text-xs uppercase tracking-widest text-[#F2B134]">Cara Kerja</p>
+                    <h2 class="mt-3 font-display font-bold text-3xl md:text-4xl">Tiga langkah, selesai.</h2>
+                </div>
+
+                <div class="mt-14 grid gap-10 lg:grid-cols-3 relative">
+                    <div
+                        class="hidden lg:block absolute top-6 left-[16.5%] right-[16.5%] border-t border-dashed border-white/15 z-0">
+                    </div>
+
+                    <div class="relative z-10">
+                        <div
+                            class="w-12 h-12 rounded-xl flex items-center justify-center glass font-mono-tix font-bold">
+                            01</div>
+                        <h3 class="mt-5 text-xl font-display font-bold">Pajang skill-mu</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Tulis apa yang kamu kuasai dan apa yang lagi
+                            kamu kejar. Makin spesifik, makin gampang ketemu jodoh belajar.</p>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-12 h-12 rounded-xl flex items-center justify-center glass font-mono-tix font-bold">
+                            02</div>
+                        <h3 class="mt-5 text-xl font-display font-bold">Cocokin &amp; negoin</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Susuri profil yang ada, cek rating, terus
+                            mulai obrolan buat nentuin jadwal dan format swap-nya.</p>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-12 h-12 rounded-xl flex items-center justify-center glass font-mono-tix font-bold">
+                            03</div>
+                        <h3 class="mt-5 text-xl font-display font-bold">Eksekusi &amp; kasih rating</h3>
+                        <p class="mt-3 text-[#98A4B5] leading-relaxed">Jalanin sesi swap-nya, kelar itu saling
+                            kasih review biar kepercayaan komunitasnya makin kebangun.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimoni" class="relative py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-2xl">
+                    <p class="font-mono-tix text-xs uppercase tracking-widest text-[#2FD4C4]">Testimoni</p>
+                    <h2 class="mt-3 font-display font-bold text-3xl md:text-4xl">Kata mereka yang udah coba.</h2>
                 </div>
 
                 <div class="mt-12 grid gap-6 lg:grid-cols-3">
-                    <div class="rounded-[28px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] mb-6 font-black">1</div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Isi profil skill</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Tambahkan skill yang bisa diajarkan dan yang ingin dipelajari untuk hasil match terbaik.</p>
+                    <div class="glass rounded-2xl p-6">
+                        <p class="leading-relaxed">"Biasanya nyari mentor itu ribet dan mahal. Di sini saya nuker jasa
+                            desain sama kelas public speaking, dua-duanya untung."</p>
+                        <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-[#2FD4C4]/15 text-[#2FD4C4] flex items-center justify-center font-mono-tix text-xs font-bold border border-[#2FD4C4]/30">
+                                    D</div>
+                                <div>
+                                    <p class="font-semibold text-sm">Dian</p>
+                                    <p class="text-xs text-[#98A4B5]">UI/UX Designer</p>
+                                </div>
+                            </div>
+                            <p class="font-mono-tix text-sm text-[#F2B134]">★★★★★</p>
+                        </div>
                     </div>
-                    <div class="rounded-[28px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#F97316]/10 text-[#F97316] mb-6 font-black">2</div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Pilih partner cocok</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Jelajahi profil, lihat rating, dan pilih partner yang paling sesuai.</p>
+                    <div class="glass rounded-2xl p-6">
+                        <p class="leading-relaxed">"Match-nya kerasa pas. Saya ajarin Laravel, partner saya ajarin saya
+                            copywriting buat dokumentasi teknis."</p>
+                        <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-[#F2B134]/15 text-[#F2B134] flex items-center justify-center font-mono-tix text-xs font-bold border border-[#F2B134]/30">
+                                    R</div>
+                                <div>
+                                    <p class="font-semibold text-sm">Rafi</p>
+                                    <p class="text-xs text-[#98A4B5]">Backend Developer</p>
+                                </div>
+                            </div>
+                            <p class="font-mono-tix text-sm text-[#F2B134]">★★★★★</p>
+                        </div>
                     </div>
-                    <div class="rounded-[28px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#10B981]/10 text-[#10B981] mb-6 font-black">3</div>
-                        <h3 class="text-xl font-black text-[#0F172A]">Mulai swap</h3>
-                        <p class="mt-3 text-[#64748B] leading-relaxed">Lakukan swap skill, dapatkan feedback, dan perluas jaringan belajarmu.</p>
+                    <div class="glass rounded-2xl p-6">
+                        <p class="leading-relaxed">"Nggak nyangka komunitasnya seaktif ini. Dalam seminggu udah dapat
+                            tiga partner swap yang serius."</p>
+                        <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-9 h-9 rounded-full bg-white/10 text-[#F5F7FA] flex items-center justify-center font-mono-tix text-xs font-bold border border-white/15">
+                                    A</div>
+                                <div>
+                                    <p class="font-semibold text-sm">Arif</p>
+                                    <p class="text-xs text-[#98A4B5]">Product Manager</p>
+                                </div>
+                            </div>
+                            <p class="font-mono-tix text-sm text-[#F2B134]">★★★★★</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="testimonials" class="relative pb-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mx-auto max-w-2xl">
-                    <p class="text-sm uppercase tracking-[0.24em] text-[#475569] font-bold">Testimoni</p>
-                    <h2 class="mt-4 text-4xl font-black text-[#0F172A]">Dengar dari member yang sudah berhasil.</h2>
-                </div>
-
-                <div class="mt-12 grid gap-6 lg:grid-cols-3">
-                    <div class="rounded-[32px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-[#4F46E5]/10 text-[#4F46E5] flex items-center justify-center font-black">D</div>
-                            <div>
-                                <p class="font-bold text-[#0F172A]">Dian</p>
-                                <p class="text-sm text-[#64748B]">UI/UX Designer</p>
-                            </div>
-                        </div>
-                        <p class="mt-6 text-[#475569] leading-relaxed">“SwapSkill membantu saya belajar cepat dan menemukan mentor yang benar-benar relevan.”</p>
-                    </div>
-                    <div class="rounded-[32px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-[#F97316]/10 text-[#F97316] flex items-center justify-center font-black">R</div>
-                            <div>
-                                <p class="font-bold text-[#0F172A]">Rafi</p>
-                                <p class="text-sm text-[#64748B]">Backend Developer</p>
-                            </div>
-                        </div>
-                        <p class="mt-6 text-[#475569] leading-relaxed">“Koneksi mentor dan proses swap skill jadi jauh lebih mudah.”</p>
-                    </div>
-                    <div class="rounded-[32px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)] p-8">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-[#10B981]/10 text-[#10B981] flex items-center justify-center font-black">A</div>
-                            <div>
-                                <p class="font-bold text-[#0F172A]">Arif</p>
-                                <p class="text-sm text-[#64748B]">Product Manager</p>
-                            </div>
-                        </div>
-                        <p class="mt-6 text-[#475569] leading-relaxed">“Platform ini membantu saya menemukan mentor dan menukar skill tanpa ribet.”</p>
-                    </div>
-                </div>
+        <section class="relative py-24 overflow-hidden">
+            <div
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[640px] h-[640px] glow blur-3xl pointer-events-none">
             </div>
-        </section>
-
-        <section class="relative pb-24">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="rounded-[32px] bg-white/90 backdrop-blur-xl border border-white/60 shadow-[0_30px_90px_rgba(15,23,42,0.08)] p-10 text-center">
-                    <p class="text-sm uppercase tracking-[0.24em] text-[#4F46E5] font-bold">Siap mulai?</p>
-                    <h2 class="mt-4 text-4xl font-black text-[#0F172A]">Bergabung dengan SwapSkill sekarang dan mulai tukar keahlian.</h2>
-                    <p class="mt-4 text-[#64748B] leading-relaxed">Buat profil dan temukan partner belajar pertama kamu dalam hitungan menit.</p>
-                    <a href="{{ route('register') }}" class="mt-8 inline-flex items-center justify-center px-10 py-4 rounded-3xl bg-gradient-to-r from-[#4F46E5] to-[#4338CA] text-white font-bold text-base shadow-xl shadow-[#4F46E5]/30 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300">
-                        Mulai Gratis
+            <div class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="glass-strong inset-highlight rounded-2xl p-10 md:p-14 text-center">
+                    <p class="font-mono-tix text-xs uppercase tracking-widest text-[#2FD4C4]">Siap mulai?</p>
+                    <h2 class="mt-4 font-display font-bold text-3xl md:text-4xl">Skill-mu berharga. Mulai tuker
+                        sekarang.</h2>
+                    <p class="mt-4 text-[#98A4B5] leading-relaxed">Bikin profil dalam 5 menit, posting skill
+                        pertamamu, dan tunggu partner belajar pertama nyamperin.</p>
+                    <a href="{{ route('register') }}"
+                        class="mt-8 inline-flex items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-br from-[#F2B134] to-[#2FD4C4] text-[#06241F] font-bold text-sm shadow-lg shadow-[#2FD4C4]/30 hover:brightness-110 transition transform hover:-translate-y-0.5">
+                        Daftar Sekarang, 100% Gratis
                     </a>
                 </div>
             </div>
         </section>
     </main>
 
+    <footer class="border-t border-white/10 py-8">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p class="font-mono-tix text-xs text-[#98A4B5] uppercase tracking-widest text-center sm:text-left">
+                SwapSkill &copy; {{ date('Y') }} — Bursa tukar keahlian.</p>
+            <div class="flex items-center gap-2">
+                <img src="{{ asset('images/logo.jpg') . '?v=' . filemtime(public_path('images/logo.jpg')) }}"
+                    alt="SwapSkill Logo" class="w-7 h-7 rounded-lg object-cover border border-white/15">
+                <span class="font-display font-bold">Swap<span class="text-[#2FD4C4]">Skill</span></span>
+            </div>
+        </div>
+    </footer>
+
 </body>
+
 </html>
