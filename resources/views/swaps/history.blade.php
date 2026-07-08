@@ -147,6 +147,11 @@
                             </div>
                         @endforeach
                     </div>
+                    @if($completedSwaps->hasPages())
+                        <div class="p-6 border-t border-[#E2E8F0] bg-slate-50/50 mt-6 rounded-b-[24px]">
+                            {{ $completedSwaps->links() }}
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

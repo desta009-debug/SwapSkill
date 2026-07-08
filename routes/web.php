@@ -43,6 +43,10 @@ Route::middleware(['auth'])->group(function () {
         [SkillSwapController::class, 'reject']
     )->name('swaps.reject');
     Route::post(
+        '/swaps/{skillSwap}/cancel',
+        [SkillSwapController::class, 'cancel']
+    )->name('swaps.cancel');
+    Route::post(
         '/swaps/{skillSwap}/complete',
         [SkillSwapController::class, 'complete']
     )->name('swaps.complete');

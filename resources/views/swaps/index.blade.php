@@ -45,7 +45,7 @@
                         <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-100 text-orange-600 font-bold shadow-sm">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                         </span>
-                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Masuk <span class="text-[#64748B] text-base font-medium">({{ $incomingRequests->count() }})</span></h2>
+                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Masuk <span class="text-[#64748B] text-base font-medium">({{ $incomingRequests->total() }})</span></h2>
                     </div>
                     
                     <div class="p-6">
@@ -83,6 +83,11 @@
                             </div>
                         @endif
                     </div>
+                    @if($incomingRequests->hasPages())
+                        <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
+                            {{ $incomingRequests->appends(request()->except('incoming_page'))->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 {{-- OUTGOING REQUESTS --}}
@@ -91,7 +96,7 @@
                         <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-[#4F46E5] font-bold shadow-sm">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
                         </span>
-                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Terkirim <span class="text-[#64748B] text-base font-medium">({{ $outgoingRequests->count() }})</span></h2>
+                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Terkirim <span class="text-[#64748B] text-base font-medium">({{ $outgoingRequests->total() }})</span></h2>
                     </div>
                     
                     <div class="p-6">
@@ -113,11 +118,22 @@
                                             </div>
                                             <span class="px-3 py-1 bg-slate-100 text-[#64748B] rounded-lg text-xs font-black uppercase tracking-wider">Menunggu Balasan</span>
                                         </div>
+                                        <div class="mt-4 flex gap-2">
+                                            <form action="{{ route('swaps.cancel', $request) }}" method="POST" class="flex-1">
+                                                @csrf
+                                                <button type="submit" class="w-full px-4 py-2 bg-white border border-[#E2E8F0] text-red-600 text-sm font-bold rounded-xl hover:bg-red-50 hover:border-red-200 transition-colors">Batalkan</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
                         @endif
                     </div>
+                    @if($outgoingRequests->hasPages())
+                        <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
+                            {{ $outgoingRequests->appends(request()->except('outgoing_page'))->links() }}
+                        </div>
+                    @endif
                 </div>
 
             </div>
@@ -132,7 +148,7 @@
                             <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-[#10B981]/10 text-[#10B981] font-bold shadow-sm">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </span>
-                            <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Swap Aktif <span class="text-[#64748B] text-base font-medium">({{ $activeSwaps->count() }})</span></h2>
+                            <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Swap Aktif <span class="text-[#64748B] text-base font-medium">({{ $activeSwaps->total() }})</span></h2>
                         </div>
                         
                         <div class="p-6">
@@ -182,6 +198,11 @@
                                 </div>
                             @endif
                         </div>
+                        @if($activeSwaps->hasPages())
+                            <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50 rounded-b-[22px]">
+                                {{ $activeSwaps->appends(request()->except('active_page'))->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
