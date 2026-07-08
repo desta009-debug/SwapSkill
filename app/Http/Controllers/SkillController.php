@@ -2,24 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateSkillRequest;
 use App\Models\Skill;
-use App\Models\User;
-use App\Models\UserSkill;
-use Illuminate\Http\Request;
+use App\Services\SkillService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 
 class SkillController extends Controller
 {
-
+    public function __construct(protected SkillService $skillService)
+    {
+    }
 
     public function edit()
     {
         $user = Auth::user();
-
-        if (! $user instanceof User) {
-            abort(403);
-        }
 
         $skills = Skill::orderBy('name')->get();
 
@@ -52,82 +48,15 @@ class SkillController extends Controller
         ));
     }
 
-    public function update(Request $request)
+    public function update(UpdateSkillRequest $request)
     {
-        $request->validate([
-            'offers' => ['nullable', 'array'],
-            'offers.*' => ['exists:skills,id'],
-
-            'wants' => ['nullable', 'array'],
-            'wants.*' => ['exists:skills,id'],
-
-            'offer_levels' => ['nullable', 'array'],
-            'want_levels' => ['nullable', 'array'],
-        ]);
-
-        $user = Auth::user();
-
-        if (! $user instanceof User) {
-            abort(403);
-        }
-
-        $offers = array_unique($request->input('offers', []));
-        $wants = array_unique($request->input('wants', []));
-
-        $offerLevels = $request->input('offer_levels', []);
-        $wantLevels = $request->input('want_levels', []);
-
-        $validLevels = ['beginner', 'intermediate', 'advanced'];
-
-        $sameSkills = array_intersect($offers, $wants);
-
-        if (! empty($sameSkills)) {
-            throw ValidationException::withMessages([
-                'skills' => 'Skill yang sama tidak boleh dipilih di Offer dan Want sekaligus.',
-            ]);
-        }
-
-        foreach ($offers as $skillId) {
-            if (
-                ! isset($offerLevels[$skillId]) ||
-                ! in_array($offerLevels[$skillId], $validLevels, true)
-            ) {
-                throw ValidationException::withMessages([
-                    'offer_levels' => 'Semua skill Offer wajib punya level yang valid.',
-                ]);
-            }
-        }
-
-        foreach ($wants as $skillId) {
-            if (
-                ! isset($wantLevels[$skillId]) ||
-                ! in_array($wantLevels[$skillId], $validLevels, true)
-            ) {
-                throw ValidationException::withMessages([
-                    'want_levels' => 'Semua skill Want wajib punya level yang valid.',
-                ]);
-            }
-        }
-
-        UserSkill::where('user_id', $user->id)->delete();
-
-        foreach ($offers as $skillId) {
-            UserSkill::create([
-                'user_id' => $user->id,
-                'skill_id' => $skillId,
-                'type' => 'offer',
-                'level' => $offerLevels[$skillId],
-            ]);
-        }
-
-        foreach ($wants as $skillId) {
-            UserSkill::create([
-                'user_id' => $user->id,
-                'skill_id' => $skillId,
-                'type' => 'want',
-                'level' => $wantLevels[$skillId],
-            ]);
-        }
+        $this->skillService->syncUserSkills(
+            $request->user(),
+            $request->getOffers(),
+            $request->getWants(),
+            $request->getOfferLevels(),
+            $request->getWantLevels()
+        );
 
         return redirect()
             ->route('dashboard')
