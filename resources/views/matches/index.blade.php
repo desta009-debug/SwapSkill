@@ -142,6 +142,9 @@
                     </div>
                 @endforeach
             </div>
+            <div class="mt-8 flex justify-center w-full">
+                {{ $matches instanceof \Illuminate\Pagination\LengthAwarePaginator ? $matches->links() : '' }}
+            </div>
         @else
             <div class="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-sm border border-[#E2E8F0] p-12 text-center relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -z-10"></div>
