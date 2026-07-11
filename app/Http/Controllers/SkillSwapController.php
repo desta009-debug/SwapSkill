@@ -110,7 +110,7 @@ class SkillSwapController extends Controller
 
         try {
             $this->skillSwapService->completeSwap($skillSwap);
-            return back()->with('success', 'Skill swap berhasil diselesaikan.');
+            return redirect()->route('swaps.history')->with('success', 'Skill swap berhasil diselesaikan.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

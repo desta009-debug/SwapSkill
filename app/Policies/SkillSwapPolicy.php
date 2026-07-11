@@ -30,6 +30,14 @@ class SkillSwapPolicy
         return $user->id === $skillSwap->sender_id || $user->id === $skillSwap->receiver_id;
     }
 
+    public function message(User $user, SkillSwap $skillSwap): bool
+    {
+        if ($skillSwap->status !== 'accepted') {
+            return false;
+        }
+        return $user->id === $skillSwap->sender_id || $user->id === $skillSwap->receiver_id;
+    }
+
     public function cancel(User $user, SkillSwap $skillSwap): bool
     {
         return $user->id === $skillSwap->sender_id;

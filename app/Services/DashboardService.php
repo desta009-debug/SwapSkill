@@ -197,4 +197,55 @@ class DashboardService
             default => 'Top Mentor',
         };
     }
+
+    /**
+     * Get dashboard statistics for a specific user.
+     * Uses optimized aggregate queries to minimize database calls.
+     */
+    public function userDashboardStats(User $user): array
+    {
+        $user->loadAvg('receivedRatings', 'rating');
+        $user->loadCount('receivedRatings');
+
+        $offeredSkills = $user->offeredSkills()->get();
+        $wantedSkills = $user->wantedSkills()->get();
+
+        // Single query for all swap statistics
+        $swapStats = SkillSwap::query()
+            ->where(function ($query) use ($user) {
+                $query->where('sender_id', $user->id)
+                      ->orWhere('receiver_id', $user->id);
+            })
+            ->selectRaw('COUNT(*) as total_swaps')
+            ->selectRaw("COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_swaps")
+            ->selectRaw("COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_requests")
+            ->selectRaw("COUNT(CASE WHEN status = 'accepted' THEN 1 END) as accepted_requests")
+            ->first();
+
+        $totalSwaps = (int) ($swapStats->total_swaps ?? 0);
+        $completedSwaps = (int) ($swapStats->completed_swaps ?? 0);
+        $pendingRequests = (int) ($swapStats->pending_requests ?? 0);
+        $acceptedRequests = (int) ($swapStats->accepted_requests ?? 0);
+
+        $successRate = $totalSwaps > 0 ? round(($completedSwaps / $totalSwaps) * 100, 1) : 0;
+
+        // Single query for all portfolio statistics
+        $portfolioStats = $user->portfolios()
+            ->selectRaw('COUNT(*) as total_portfolios')
+            ->selectRaw('COALESCE(SUM(views_count), 0) as total_portfolio_views')
+            ->first();
+
+        return [
+            'user' => $user,
+            'offeredSkills' => $offeredSkills,
+            'wantedSkills' => $wantedSkills,
+            'totalSwaps' => $totalSwaps,
+            'completedSwaps' => $completedSwaps,
+            'pendingRequests' => $pendingRequests,
+            'acceptedRequests' => $acceptedRequests,
+            'successRate' => $successRate,
+            'totalPortfolios' => (int) ($portfolioStats->total_portfolios ?? 0),
+            'totalPortfolioViews' => (int) ($portfolioStats->total_portfolio_views ?? 0),
+        ];
+    }
 }

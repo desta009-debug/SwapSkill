@@ -130,14 +130,20 @@
                         
                         {{-- Card Footer --}}
                         <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
-                            <form action="{{ route('swap.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
-                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#4F46E5] to-[#4338CA] hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all transform group-hover:scale-[1.02]">
-                                    Kirim Request Swap
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            @if($match['has_active_swap'])
+                                <button disabled class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-slate-500 bg-slate-100 cursor-not-allowed">
+                                    Swap Sedang Berjalan
                                 </button>
-                            </form>
+                            @else
+                                <form action="{{ route('swap.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
+                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#4F46E5] to-[#4338CA] hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all transform group-hover:scale-[1.02]">
+                                        Kirim Request Swap
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @endforeach

@@ -9,10 +9,10 @@ use Exception;
 
 class SkillSwapService
 {
-    public function hasPendingSwap(User $sender, int $receiverId): bool
+    public function hasActiveSwap(User $sender, int $receiverId): bool
     {
         return SkillSwap::query()
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'accepted'])
             ->where(function ($query) use ($sender, $receiverId) {
                 $query->where(function($q) use ($sender, $receiverId) {
                     $q->where('sender_id', $sender->id)
@@ -32,8 +32,8 @@ class SkillSwapService
             throw new Exception('Tidak bisa mengirim request ke diri sendiri.');
         }
 
-        if ($this->hasPendingSwap($sender, $receiverId)) {
-            throw new Exception('Masih ada request pending.');
+        if ($this->hasActiveSwap($sender, $receiverId)) {
+            throw new Exception('Kalian sudah memiliki request swap yang masih aktif (pending/accepted).');
         }
 
         return SkillSwap::create([

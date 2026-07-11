@@ -629,9 +629,9 @@
                     @forelse($activeSwaps as $swap)
                         @php
                             $swapPartner = auth()->id() === $swap->sender_id ? $swap->receiver : $swap->sender;
-                            $lastMessage = $swap->messages->first();
+                            $lastMessage = $swap->latestMessage;
                             $isActive = $skillSwap && $skillSwap->id === $swap->id;
-                            $unreadCount = $swap->messages->where('sender_id', '!=', auth()->id())->where('is_read', false)->count();
+                            $unreadCount = $swap->unread_count ?? 0;
                         @endphp
 
                         <a

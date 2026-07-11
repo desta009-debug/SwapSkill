@@ -4,11 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Message;
 use App\Models\SkillSwap;
+use App\Models\User;
+use App\Http\Requests\StoreMessageRequest;
+use App\Services\ChatService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ChatController extends Controller
 {
+    use AuthorizesRequests;
+
+    private ChatService $chatService;
+
+    public function __construct(ChatService $chatService)
+    {
+        $this->chatService = $chatService;
+    }
+
     /**
      * Show the inbox.
      */
@@ -16,10 +29,16 @@ class ChatController extends Controller
     {
         $user = Auth::user();
 
-        // Get all active swaps for this user
-        $activeSwaps = SkillSwap::with(['sender', 'receiver', 'messages' => function ($query) {
-            $query->latest()->limit(1);
-        }])
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        // Get all active swaps for this user with latest message
+        $activeSwaps = SkillSwap::with(['sender', 'receiver', 'latestMessage'])
+            ->withCount(['messages as unread_count' => function ($query) use ($user) {
+                $query->where('sender_id', '!=', $user->id)
+                      ->where('is_read', false);
+            }])
             ->where(function($q) use ($user) {
                 $q->where('sender_id', $user->id)
                   ->orWhere('receiver_id', $user->id);
@@ -46,30 +65,23 @@ class ChatController extends Controller
      */
     public function show(SkillSwap $skillSwap)
     {
-        // Ensure the current user is a participant
-        if ($skillSwap->sender_id !== Auth::id() && $skillSwap->receiver_id !== Auth::id()) {
-            abort(403, 'Unauthorized access to chat.');
-        }
-
-        // Only allow chatting for accepted swaps
-        if ($skillSwap->status !== 'accepted') {
-            return redirect()->route('swaps.index')->with('error', 'Chat hanya tersedia untuk swap yang sudah diterima.');
-        }
+        $this->authorize('message', $skillSwap);
 
         // Mark unread messages from partner as read
-        $skillSwap->messages()
-            ->where('sender_id', '!=', Auth::id())
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+        $this->chatService->markPartnerMessagesAsRead($skillSwap, Auth::id());
 
         $partner = Auth::id() === $skillSwap->sender_id ? $skillSwap->receiver : $skillSwap->sender;
-        $messages = $skillSwap->messages()->with('sender')->orderBy('created_at', 'asc')->get();
+        
+        // Fetch recent messages (limited to 50 for initial load, reversed to show oldest first at top)
+        $messages = $this->chatService->getRecentMessages($skillSwap, 50);
 
         // Fetch all active swaps for sidebar
         $user = Auth::user();
-        $activeSwaps = SkillSwap::with(['sender', 'receiver', 'messages' => function ($query) {
-            $query->latest();
-        }])
+        $activeSwaps = SkillSwap::with(['sender', 'receiver', 'latestMessage'])
+            ->withCount(['messages as unread_count' => function ($query) use ($user) {
+                $query->where('sender_id', '!=', $user->id)
+                      ->where('is_read', false);
+            }])
             ->where(function($q) use ($user) {
                 $q->where('sender_id', $user->id)
                   ->orWhere('receiver_id', $user->id);
@@ -84,21 +96,15 @@ class ChatController extends Controller
     /**
      * Store a new message.
      */
-    public function store(Request $request, SkillSwap $skillSwap)
+    public function store(StoreMessageRequest $request, SkillSwap $skillSwap)
     {
-        if ($skillSwap->sender_id !== Auth::id() && $skillSwap->receiver_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('message', $skillSwap);
 
-        $request->validate([
-            'message' => 'required|string|max:1000',
-        ]);
-
-        $message = $skillSwap->messages()->create([
-            'sender_id' => Auth::id(),
-            'message' => $request->message,
-            'is_read' => false,
-        ]);
+        $message = $this->chatService->storeMessage(
+            $skillSwap, 
+            Auth::id(), 
+            $request->message
+        );
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -115,24 +121,19 @@ class ChatController extends Controller
      */
     public function fetch(Request $request, SkillSwap $skillSwap)
     {
-        if ($skillSwap->sender_id !== Auth::id() && $skillSwap->receiver_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('message', $skillSwap);
 
-        $lastMessageId = $request->query('last_id', 0);
+        $lastMessageId = (int) $request->query('last_id', 0);
 
-        $newMessages = $skillSwap->messages()
-            ->with('sender')
-            ->where('id', '>', $lastMessageId)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        $newMessages = $this->chatService->getNewMessages($skillSwap, $lastMessageId);
 
-        if ($newMessages->count() > 0) {
+        if ($newMessages->isNotEmpty()) {
             // Mark fetched messages from partner as read
-            $skillSwap->messages()
-                ->whereIn('id', $newMessages->pluck('id'))
-                ->where('sender_id', '!=', Auth::id())
-                ->update(['is_read' => true]);
+            $this->chatService->markMessagesAsRead(
+                $skillSwap, 
+                $newMessages->pluck('id')->toArray(), 
+                Auth::id()
+            );
         }
 
         return response()->json($newMessages);

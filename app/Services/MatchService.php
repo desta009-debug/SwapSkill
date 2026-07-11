@@ -54,7 +54,21 @@ class MatchService
             })
             ->get();
 
-        $matches = $users->map(function ($user) use ($myOfferedSkills, $myWantedSkills) {
+        $activeSwapPartnerIds = \App\Models\SkillSwap::query()
+            ->whereIn('status', ['pending', 'accepted'])
+            ->where(function ($q) use ($currentUser) {
+                $q->where('sender_id', $currentUser->id)
+                  ->orWhere('receiver_id', $currentUser->id);
+            })
+            ->get()
+            ->flatMap(function ($swap) use ($currentUser) {
+                return [$swap->sender_id, $swap->receiver_id];
+            })
+            ->reject(fn ($id) => $id === $currentUser->id)
+            ->unique()
+            ->flip();
+
+        $matches = $users->map(function ($user) use ($myOfferedSkills, $myWantedSkills, $activeSwapPartnerIds) {
             $theirOfferedSkills = $user->offeredSkills->keyBy('id');
             $theirWantedSkills = $user->wantedSkills->keyBy('id');
 
@@ -83,6 +97,7 @@ class MatchService
                 'match_type' => $matchType,
                 'score' => $this->calculateScore($skillsTheyCanTeachMe, $skillsTheyWantFromMe, $matchType),
                 'explanation' => $this->generateExplanation($skillsTheyCanTeachMe, $skillsTheyWantFromMe, $matchType),
+                'has_active_swap' => $activeSwapPartnerIds->has($user->id),
             ];
         })
         ->sortByDesc(fn($match) => $match['score'])
