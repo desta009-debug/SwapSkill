@@ -56,16 +56,16 @@
 
             {{-- Grid Gallery --}}
             @if($portfolios->isEmpty())
-                <div class="bg-white rounded-3xl border border-[#E2E8F0] p-16 text-center shadow-sm">
-                    <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <x-empty-state title="Belum Ada Portofolio" description="Jadilah yang pertama untuk memamerkan keahlianmu. Tunjukkan kemampuanmu lewat project nyata dan bangun kredibilitas di komunitas SwapSkill." variant="large">
+                    <x-slot:icon>
                         <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h3 class="text-2xl font-black text-slate-800 mb-2 font-fraunces">Belum Ada Portofolio</h3>
-                    <p class="text-slate-500 max-w-md mx-auto mb-8 font-medium">Jadilah yang pertama untuk memamerkan keahlianmu. Tunjukkan kemampuanmu lewat project nyata dan bangun kredibilitas di komunitas SwapSkill.</p>
-                    <a href="{{ route('portfolio.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4F46E5] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all">
-                        Buat Portofolio Pertama
-                    </a>
-                </div>
+                    </x-slot:icon>
+                    <x-slot:primaryAction>
+                        <a href="{{ route('portfolio.create') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#4F46E5] text-white font-bold rounded-xl shadow-xl hover:scale-105 transition-all">
+                            Buat Portofolio Pertama
+                        </a>
+                    </x-slot:primaryAction>
+                </x-empty-state>
             @else
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     @foreach($portfolios as $portfolio)

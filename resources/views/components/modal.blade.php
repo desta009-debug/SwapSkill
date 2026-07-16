@@ -31,12 +31,13 @@
         x-transition:leave="ease-in duration-200"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
+        aria-hidden="true"
     ></div>
 
-    <div class="relative z-50 flex min-h-full items-center justify-center">
+    <div class="relative z-50 flex min-h-full items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="{{ $name }}-title">
         <div
             x-show="show"
-            class="relative w-full {{ $maxWidth }} transform overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl transition-all sm:mx-auto sm:p-8"
+            class="relative w-full {{ $maxWidth }} transform overflow-hidden rounded-[24px] border border-[#E2E8F0] bg-white p-6 shadow-2xl transition-all sm:mx-auto sm:p-8"
             x-transition:enter="ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"

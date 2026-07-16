@@ -52,7 +52,11 @@
                                 @forelse($user->offeredSkills as $skill)
                                     <span class="px-3 py-1.5 bg-indigo-50 text-[#4F46E5] text-xs font-bold rounded-lg border border-indigo-100">{{ $skill->name }}</span>
                                 @empty
-                                    <span class="text-slate-400 text-xs italic">Belum ada skill yang ditawarkan.</span>
+                                <x-empty-state title="Belum ada skill ditawarkan." description="" variant="compact">
+                                    <x-slot:icon>
+                                        <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                    </x-slot:icon>
+                                </x-empty-state>
                                 @endforelse
                             </div>
                         </div>
@@ -62,7 +66,11 @@
                                 @forelse($user->wantedSkills as $skill)
                                     <span class="px-3 py-1.5 bg-orange-50 text-[#F97316] text-xs font-bold rounded-lg border border-orange-100">{{ $skill->name }}</span>
                                 @empty
-                                    <span class="text-slate-400 text-xs italic">Belum ada skill yang ingin dipelajari.</span>
+                                <x-empty-state title="Belum ada skill yang ingin dipelajari." description="" variant="compact">
+                                    <x-slot:icon>
+                                        <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                    </x-slot:icon>
+                                </x-empty-state>
                                 @endforelse
                             </div>
                         </div>
@@ -100,7 +108,11 @@
                                     @endif
                                 </div>
                             @empty
-                                <p class="text-sm text-slate-500 italic text-center py-4">Belum ada sertifikasi yang ditambahkan.</p>
+                            <x-empty-state title="Belum ada sertifikasi yang ditambahkan." description="" variant="compact">
+                                <x-slot:icon>
+                                    <svg class="w-7 h-7 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                </x-slot:icon>
+                            </x-empty-state>
                             @endforelse
                         </div>
                     </div>
@@ -119,13 +131,11 @@
                     </div>
 
                     @if($user->portfolios->isEmpty())
-                        <div class="bg-white rounded-3xl border border-[#E2E8F0] p-16 text-center shadow-sm">
-                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2 font-fraunces">Belum Ada Portofolio</h3>
-                            <p class="text-slate-500 max-w-sm mx-auto font-medium">Tunjukkan keahlianmu lewat project nyata dan bangun kredibilitas di komunitas SwapSkill.</p>
-                        </div>
+                        <x-empty-state title="Belum Ada Portofolio" description="Tunjukkan keahlianmu lewat project nyata dan bangun kredibilitas di komunitas SwapSkill." variant="large">
+                            <x-slot:icon>
+                                <svg class="w-12 h-12 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </x-slot:icon>
+                        </x-empty-state>
                     @else
                         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                             @foreach($user->portfolios as $portfolio)

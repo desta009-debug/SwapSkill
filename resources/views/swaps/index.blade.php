@@ -50,9 +50,11 @@
                     
                     <div class="p-6">
                         @if($incomingRequests->isEmpty())
-                            <div class="text-center py-8 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-white/50">
-                                <p class="text-sm font-medium text-[#64748B]">Belum ada request masuk.</p>
-                            </div>
+                            <x-empty-state variant="compact" title="Belum ada request masuk." description="Permintaan swap dari partner akan muncul di sini.">
+                                <x-slot:icon>
+                                    <svg class="w-7 h-7 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                                </x-slot:icon>
+                            </x-empty-state>
                         @else
                             <div class="space-y-4">
                                 @foreach($incomingRequests as $request)
@@ -101,9 +103,17 @@
                     
                     <div class="p-6">
                         @if($outgoingRequests->isEmpty())
-                            <div class="text-center py-8 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-white/50">
-                                <p class="text-sm font-medium text-[#64748B]">Kamu belum mengirim request ke siapapun.</p>
-                            </div>
+                            <x-empty-state variant="compact" title="Belum ada request terkirim." description="Mulai cari partner dan kirim request swap.">
+                                <x-slot:icon>
+                                    <svg class="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+                                </x-slot:icon>
+                                <x-slot:primaryAction>
+                                    <a href="{{ route('matches.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#4F46E5] to-[#4338CA] text-white text-sm font-bold rounded-xl hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                        Cari Partner
+                                    </a>
+                                </x-slot:primaryAction>
+                            </x-empty-state>
                         @else
                             <div class="space-y-4">
                                 @foreach($outgoingRequests as $request)
@@ -153,12 +163,11 @@
                         
                         <div class="p-6">
                             @if($activeSwaps->isEmpty())
-                                <div class="text-center py-10 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-slate-50/50">
-                                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-[#64748B]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                                    </div>
-                                    <p class="text-sm font-medium text-[#64748B]">Belum ada swap yang aktif.</p>
-                                </div>
+                                <x-empty-state title="Belum ada swap yang aktif." description="Swap yang sedang berjalan akan muncul di sini.">
+                                    <x-slot:icon>
+                                        <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                                    </x-slot:icon>
+                                </x-empty-state>
                             @else
                                 <div class="space-y-4">
                                     @foreach($activeSwaps as $swap)

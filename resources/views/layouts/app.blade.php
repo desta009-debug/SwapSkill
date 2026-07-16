@@ -20,7 +20,7 @@
         }
     </style>
 </head>
-<body class="bg-[#F8FAFC] text-[#0F172A] antialiased">
+<body class="bg-[#F8FAFC] text-[#0F172A] antialiased overflow-x-hidden">
     <div class="min-h-screen">
         @include('layouts.navigation')
 
