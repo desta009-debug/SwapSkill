@@ -11,16 +11,33 @@ class SkillSeeder extends Seeder
     public function run(): void
     {
         $skills = [
-            ['name' => 'Figma', 'category' => 'Design'],
-            ['name' => 'UI Design', 'category' => 'Design'],
+            // Programming
+            ['name' => 'HTML', 'category' => 'Programming'],
+            ['name' => 'CSS', 'category' => 'Programming'],
+            ['name' => 'JavaScript', 'category' => 'Programming'],
+            ['name' => 'TypeScript', 'category' => 'Programming'],
+            ['name' => 'PHP', 'category' => 'Programming'],
+            ['name' => 'Laravel', 'category' => 'Programming'],
+            ['name' => 'React', 'category' => 'Programming'],
+            ['name' => 'Vue', 'category' => 'Programming'],
+            ['name' => 'MySQL', 'category' => 'Programming'],
+            ['name' => 'Python', 'category' => 'Programming'],
+            
+            // Design
             ['name' => 'Canva', 'category' => 'Design'],
-            ['name' => 'Excel', 'category' => 'Productivity'],
-            ['name' => 'Public Speaking', 'category' => 'Communication'],
+            ['name' => 'Figma', 'category' => 'Design'],
+            ['name' => 'Photoshop', 'category' => 'Design'],
+            ['name' => 'Illustrator', 'category' => 'Design'],
+            ['name' => 'UI Design', 'category' => 'Design'],
+            
+            // Language
             ['name' => 'English Speaking', 'category' => 'Language'],
-            ['name' => 'HTML', 'category' => 'Development'],
-            ['name' => 'CSS', 'category' => 'Development'],
-            ['name' => 'JavaScript', 'category' => 'Development'],
-            ['name' => 'Video Editing', 'category' => 'Creative'],
+            ['name' => 'Japanese', 'category' => 'Language'],
+            ['name' => 'Public Speaking', 'category' => 'Language'],
+            
+            // Business
+            ['name' => 'Digital Marketing', 'category' => 'Business'],
+            ['name' => 'Copywriting', 'category' => 'Business'],
         ];
 
         foreach ($skills as $skill) {

@@ -64,10 +64,10 @@
                                 </span>
                             </div>
 
-                            <div class="flex items-start gap-4 pr-20">
+                            <div class="flex items-start gap-4 pr-36 sm:pr-40">
                                 <img src="{{ $match['user']->profile_photo_url }}" alt="{{ $match['user']->name }}" class="w-14 h-14 rounded-[16px] object-cover shadow-sm border-2 border-white">
                                 <div>
-                                    <h3 class="font-fraunces text-lg font-bold text-[#0F172A] leading-tight group-hover:text-[#4F46E5] transition-colors">{{ $match['user']->name }}</h3>
+                                    <h3 class="font-fraunces text-lg font-bold text-[#0F172A] leading-tight group-hover:text-[#4F46E5] transition-colors break-words line-clamp-2">{{ $match['user']->name }}</h3>
                                     <div class="flex items-center gap-1 mt-1.5 text-xs font-bold text-[#F97316]">
                                         ⭐ {{ number_format($match['user']->received_ratings_avg_rating ?? 0, 1) }}
                                         <span class="text-[#64748B] font-medium ml-1">({{ $match['user']->received_ratings_count ?? 0 }} ulasan)</span>

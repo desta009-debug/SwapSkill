@@ -63,14 +63,15 @@
                                             <div class="flex items-center gap-3">
                                                 <img src="{{ $request->sender->profile_photo_url }}" alt="{{ $request->sender->name }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
                                                 <div>
-                                                    <p class="font-bold text-[#0F172A]">{{ $request->sender->name }}</p>
+                                                    <a href="{{ route('user.show', $request->sender) }}" class="font-bold text-[#0F172A] hover:text-[#4F46E5] transition-colors">{{ $request->sender->name }}</a>
                                                     <p class="text-xs text-[#64748B] font-medium">{{ $request->created_at->diffForHumans() }}</p>
                                                 </div>
                                             </div>
                                             <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-black uppercase tracking-wider">Menunggu</span>
                                         </div>
                                         
-                                        <div class="mt-4 flex gap-2">
+                                        <div class="mt-4 flex flex-col sm:flex-row gap-2">
+                                            <a href="{{ route('user.show', $request->sender) }}" target="_blank" class="flex-1 flex items-center justify-center px-4 py-2 bg-indigo-50 text-[#4F46E5] text-sm font-bold rounded-xl hover:bg-indigo-100 transition-colors">Lihat Profil</a>
                                             <form action="{{ route('swaps.accept', $request) }}" method="POST" class="flex-1">
                                                 @csrf
                                                 <button type="submit" class="w-full px-4 py-2 bg-[#10B981] text-white text-sm font-bold rounded-xl hover:bg-[#059669] transition-colors shadow-sm">Terima</button>

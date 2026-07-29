@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\SkillSwapController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\CertificateVerificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -72,7 +74,30 @@ Route::middleware(['auth'])->group(function () {
     // Certifications
     Route::post('/certifications', [App\Http\Controllers\CertificationController::class, 'store'])->name('certifications.store');
     Route::delete('/certifications/{certification}', [App\Http\Controllers\CertificationController::class, 'destroy'])->name('certifications.destroy');
+    Route::middleware(['auth', 'admin'])
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            Route::get(
+                '/',
+                [AdminDashboardController::class, 'index']
+            )->name('dashboard');
 
+            Route::get('/certificates', [CertificateVerificationController::class, 'index'])
+                ->name('certificates.index');
+
+            Route::get('/certificates/{certification}', [CertificateVerificationController::class, 'show'])
+                ->name('certificates.show');
+
+            Route::patch('/certificates/{certification}/approve', [CertificateVerificationController::class, 'approve'])
+                ->name('certificates.approve');
+
+            Route::patch('/certificates/{certification}/reject', [CertificateVerificationController::class, 'reject'])
+                ->name('certificates.reject');
+
+            Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])
+                ->name('moderation.index');
+        });
 });
 
 require __DIR__ . '/auth.php';

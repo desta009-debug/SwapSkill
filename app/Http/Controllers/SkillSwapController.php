@@ -6,6 +6,7 @@ use App\Models\SkillSwap;
 use App\Models\User;
 use App\Http\Requests\StoreSkillSwapRequest;
 use App\Services\SkillSwapService;
+use App\Services\ModerationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -14,10 +15,12 @@ class SkillSwapController extends Controller
     use AuthorizesRequests;
 
     private SkillSwapService $skillSwapService;
+    private ModerationService $moderationService;
 
-    public function __construct(SkillSwapService $skillSwapService)
+    public function __construct(SkillSwapService $skillSwapService, ModerationService $moderationService)
     {
         $this->skillSwapService = $skillSwapService;
+        $this->moderationService = $moderationService;
     }
 
     public function store(StoreSkillSwapRequest $request)
@@ -29,13 +32,27 @@ class SkillSwapController extends Controller
         }
 
         try {
+            $rawMessage = $request->message;
+            $hasProfanity = false;
+            $cleanedMessage = $rawMessage;
+
+            if ($rawMessage && $this->moderationService->contains($rawMessage)) {
+                $cleanedMessage = $this->moderationService->clean($rawMessage);
+                $hasProfanity = true;
+            }
+
             $this->skillSwapService->createSwapRequest(
                 $sender,
                 (int) $request->receiver_id,
-                $request->message
+                $cleanedMessage
             );
 
-            return back()->with('success', 'Request berhasil dikirim.');
+            $redirect = back()->with('success', 'Request berhasil dikirim.');
+            if ($hasProfanity) {
+                $redirect->with('warning', 'Peringatan Bahasa: Pesan request swap Anda mengandung kata yang dilarang dan telah difilter secara otomatis.');
+            }
+
+            return $redirect;
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }

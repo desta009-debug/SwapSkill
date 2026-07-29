@@ -132,7 +132,7 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
     <div class="mx-auto max-w-7xl">
 
         {{-- ============ MAIN GLASS CAPSULE ============ --}}
-        <div class="lg-surface flex h-16 items-center justify-between rounded-full px-3 sm:px-4 lg:px-6 overflow-hidden">
+        <div class="lg-surface flex h-16 items-center justify-between rounded-full px-3 sm:px-4 lg:px-6">
 
             <div class="flex items-center gap-3 lg:gap-6 flex-1 min-w-0">
                 <!-- Logo -->

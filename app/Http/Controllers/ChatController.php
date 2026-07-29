@@ -7,6 +7,7 @@ use App\Models\SkillSwap;
 use App\Models\User;
 use App\Http\Requests\StoreMessageRequest;
 use App\Services\ChatService;
+use App\Services\ModerationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -16,10 +17,12 @@ class ChatController extends Controller
     use AuthorizesRequests;
 
     private ChatService $chatService;
+    private ModerationService $moderationService;
 
-    public function __construct(ChatService $chatService)
+    public function __construct(ChatService $chatService, ModerationService $moderationService)
     {
         $this->chatService = $chatService;
+        $this->moderationService = $moderationService;
     }
 
     /**
@@ -94,21 +97,26 @@ class ChatController extends Controller
     }
 
     /**
-     * Store a new message.
+     * Store a new message with profanity moderation.
      */
     public function store(StoreMessageRequest $request, SkillSwap $skillSwap)
     {
         $this->authorize('message', $skillSwap);
 
+        $rawMessage = $request->message;
+        $isFiltered = $this->moderationService->contains($rawMessage);
+        $cleanedMessage = $this->moderationService->clean($rawMessage);
+
         $message = $this->chatService->storeMessage(
             $skillSwap, 
             Auth::id(), 
-            $request->message
+            $cleanedMessage
         );
 
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
+                'filtered' => $isFiltered,
                 'message' => $message->load('sender')
             ]);
         }
