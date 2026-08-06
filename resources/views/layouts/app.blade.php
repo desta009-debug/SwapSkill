@@ -36,5 +36,21 @@
             {{ $slot }}
         </main>
     </div>
+
+    @if(session('profanity_warning'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: 'Language Warning',
+                        text: "{{ session('profanity_warning') }}",
+                        icon: 'warning',
+                        confirmButtonColor: '#4F46E5',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        </script>
+    @endif
 </body>
 </html>

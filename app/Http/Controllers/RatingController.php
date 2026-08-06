@@ -7,8 +7,17 @@ use App\Models\SkillSwap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Services\ModerationService;
+
 class RatingController extends Controller
 {
+    protected ModerationService $moderationService;
+
+    public function __construct(ModerationService $moderationService)
+    {
+        $this->moderationService = $moderationService;
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -47,6 +56,25 @@ class RatingController extends Controller
             $currentUserId !== $skillSwap->receiver_id
         ) {
             abort(403);
+        }
+
+        if ($request->filled('review') && $this->moderationService->contains($request->review)) {
+            $matchedWords = $this->moderationService->matchedWords($request->review);
+            $this->moderationService->logEvent(
+                $currentUserId,
+                'rating_review',
+                $request->review,
+                $this->moderationService->clean($request->review),
+                $matchedWords
+            );
+
+            return back()->with(
+                'profanity_warning',
+                'Please communicate respectfully. Your message was automatically filtered.'
+            )->with(
+                'error',
+                'Komentar mengandung kata yang dilarang. Harap gunakan bahasa yang sopan.'
+            );
         }
 
         $alreadyRated = Rating::query()

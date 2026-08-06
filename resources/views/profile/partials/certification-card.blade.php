@@ -1,3 +1,4 @@
+@if($cert->verification_status === 'verified')
 <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col cursor-pointer relative"
     onclick="openCertificateModal(this)"
     data-name="{{ $cert->name }}"
@@ -37,25 +38,11 @@
         </div>
         @endif
 
-        {{-- Verification Status Badge --}}
-        @php
-        $status = strtolower($cert->verification_status ?? 'pending');
-        @endphp
-
+        {{-- Verified Badge --}}
         <div class="absolute top-3 left-3 z-10">
-            @if($status === 'verified')
             <span class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/90 backdrop-blur-xs px-3 py-1 text-[11px] font-extrabold text-white shadow-lg shadow-emerald-500/20">
                 <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Verified
             </span>
-            @elseif($status === 'rejected')
-            <span class="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/90 backdrop-blur-xs px-3 py-1 text-[11px] font-extrabold text-white shadow-lg shadow-rose-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-white"></span> Rejected
-            </span>
-            @else
-            <span class="inline-flex items-center gap-1.5 rounded-xl bg-amber-500/90 backdrop-blur-xs px-3 py-1 text-[11px] font-extrabold text-white shadow-lg shadow-amber-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-white"></span> Pending Review
-            </span>
-            @endif
         </div>
     </div>
 
@@ -98,3 +85,4 @@
         </div>
     </div>
 </div>
+@endif
