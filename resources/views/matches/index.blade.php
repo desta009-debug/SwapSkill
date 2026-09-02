@@ -55,7 +55,7 @@
                     <div class="group bg-white/80 backdrop-blur-xl rounded-[24px] shadow-sm border border-[#E2E8F0] hover:shadow-lg hover:border-[#4F46E5]/30 transition-all duration-300 flex flex-col overflow-hidden relative">
                         
                         {{-- Card Header --}}
-                        <div class="p-6 border-b border-[#E2E8F0] bg-slate-50/50 relative">
+                        <div class="p-4 sm:p-6 border-b border-[#E2E8F0] bg-slate-50/50 relative">
                             {{-- Match Percentage Badge --}}
                             <div class="absolute top-4 right-4">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider {{ $match['match_type'] === 'Mutual Match' ? 'bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'bg-[#4F46E5]/10 text-[#4F46E5] border border-[#4F46E5]/20 shadow-[0_0_10px_rgba(79,70,229,0.2)]' }}">
@@ -64,10 +64,10 @@
                                 </span>
                             </div>
 
-                            <div class="flex items-start gap-4 pr-20">
+                            <div class="flex items-start gap-4 pr-36 sm:pr-40">
                                 <img src="{{ $match['user']->profile_photo_url }}" alt="{{ $match['user']->name }}" class="w-14 h-14 rounded-[16px] object-cover shadow-sm border-2 border-white">
                                 <div>
-                                    <h3 class="font-fraunces text-lg font-bold text-[#0F172A] leading-tight group-hover:text-[#4F46E5] transition-colors">{{ $match['user']->name }}</h3>
+                                    <h3 class="font-fraunces text-lg font-bold text-[#0F172A] leading-tight group-hover:text-[#4F46E5] transition-colors break-words line-clamp-2">{{ $match['user']->name }}</h3>
                                     <div class="flex items-center gap-1 mt-1.5 text-xs font-bold text-[#F97316]">
                                         ⭐ {{ number_format($match['user']->received_ratings_avg_rating ?? 0, 1) }}
                                         <span class="text-[#64748B] font-medium ml-1">({{ $match['user']->received_ratings_count ?? 0 }} ulasan)</span>
@@ -130,35 +130,41 @@
                         
                         {{-- Card Footer --}}
                         <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
-                            <form action="{{ route('swap.store') }}" method="POST">
-                                @csrf
-                                <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
-                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#4F46E5] to-[#4338CA] hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all transform group-hover:scale-[1.02]">
-                                    Kirim Request Swap
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            @if($match['has_active_swap'])
+                                <button disabled class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-slate-500 bg-slate-100 cursor-not-allowed">
+                                    Swap Sedang Berjalan
                                 </button>
-                            </form>
+                            @else
+                                <form action="{{ route('swap.store') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="receiver_id" value="{{ $match['user']->id }}">
+                                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-transparent text-sm font-bold rounded-xl text-white bg-gradient-to-r from-[#4F46E5] to-[#4338CA] hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all transform group-hover:scale-[1.02]">
+                                        Kirim Request Swap
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 @endforeach
             </div>
+            <div class="mt-8 flex justify-center w-full">
+                {{ $matches instanceof \Illuminate\Pagination\LengthAwarePaginator ? $matches->links() : '' }}
+            </div>
         @else
-            <div class="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-sm border border-[#E2E8F0] p-12 text-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-slate-100 rounded-full blur-3xl -z-10"></div>
-                <svg class="mx-auto h-20 w-20 text-[#64748B]/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <h3 class="mt-6 font-fraunces text-2xl font-bold text-[#0F172A]">Belum ada Match</h3>
-                <p class="mt-3 text-[#64748B] text-base max-w-md mx-auto">
-                    Kami belum menemukan pengguna yang cocok dengan profil kamu saat ini. Coba tambahkan lebih banyak skill untuk memperbesar peluang.
-                </p>
-                <div class="mt-8">
+            <x-empty-state title="Belum ada Match" description="Kami belum menemukan pengguna yang cocok dengan profil kamu saat ini. Coba tambahkan lebih banyak skill untuk memperbesar peluang." variant="large">
+                <x-slot:icon>
+                    <svg class="w-12 h-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </x-slot:icon>
+                <x-slot:primaryAction>
                     <a href="{{ route('skills.edit') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white text-sm font-bold rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-[#F97316]/30">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                         Tambah Skill Baru
                     </a>
-                </div>
-            </div>
+                </x-slot:primaryAction>
+            </x-empty-state>
         @endif
 
     </div>

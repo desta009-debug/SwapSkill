@@ -629,9 +629,9 @@
                     @forelse($activeSwaps as $swap)
                         @php
                             $swapPartner = auth()->id() === $swap->sender_id ? $swap->receiver : $swap->sender;
-                            $lastMessage = $swap->messages->first();
+                            $lastMessage = $swap->latestMessage;
                             $isActive = $skillSwap && $skillSwap->id === $swap->id;
-                            $unreadCount = $swap->messages->where('sender_id', '!=', auth()->id())->where('is_read', false)->count();
+                            $unreadCount = $swap->unread_count ?? 0;
                         @endphp
 
                         <a
@@ -844,6 +844,15 @@
                                 messageInput.value = '';
                                 appendMessage(data.message, true);
                                 messagesContainer.dataset.lastId = data.message.id;
+
+                                if (data.filtered && typeof Swal !== 'undefined') {
+                                    Swal.fire({
+                                        title: 'Language Warning',
+                                        text: 'Please communicate respectfully. Your message was automatically filtered.',
+                                        icon: 'warning',
+                                        confirmButtonColor: '#4F46E5'
+                                    });
+                                }
                             }
                         })
                         .catch(error => console.error('Send error:', error))

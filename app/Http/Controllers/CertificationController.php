@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certification;
+use App\Services\ModerationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CertificationController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request, ModerationService $moderationService)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -18,6 +19,13 @@ class CertificationController extends Controller
             'certificate_url' => 'nullable|url',
             'image_path' => 'nullable|image|max:2048',
         ]);
+
+        $hasProfanity = false;
+
+        if ($moderationService->contains($validated['name'])) {
+            $validated['name'] = $moderationService->clean($validated['name']);
+            $hasProfanity = true;
+        }
 
         $certification = new Certification();
         $certification->user_id = Auth::id();
@@ -33,7 +41,12 @@ class CertificationController extends Controller
 
         $certification->save();
 
-        return redirect()->route('user.show', Auth::id())->with('success', 'Certification added successfully!');
+        $redirect = redirect()->route('user.show', Auth::id())->with('success', 'Certification added successfully!');
+        if ($hasProfanity) {
+            $redirect->with('warning', 'Peringatan Bahasa: Nama sertifikasi mengandung kata yang dilarang dan telah difilter secara otomatis.');
+        }
+
+        return $redirect;
     }
 
     public function destroy(Certification $certification)

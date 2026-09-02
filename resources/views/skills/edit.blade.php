@@ -46,14 +46,14 @@
         }">
             @csrf
 
-            <div class="grid lg:grid-cols-2 gap-8">
+            <div class="grid lg:grid-cols-2 gap-6 lg:gap-8">
 
                 {{-- OFFER CARD --}}
                 <div
                     class="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-sm overflow-hidden border border-[#E2E8F0] relative group hover:border-[#4F46E5]/40 transition-all duration-300">
                     <div class="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-r from-[#4F46E5] to-[#4338CA]"></div>
-                    <div class="p-8 h-full flex flex-col">
-                        <div class="flex items-center gap-4 mb-8">
+                    <div class="p-4 sm:p-8 h-full flex flex-col">
+                        <div class="flex items-center gap-4 mb-6 sm:mb-8">
                             <div
                                 class="w-12 h-12 rounded-xl bg-[#4F46E5]/10 flex items-center justify-center text-[#4F46E5] shadow-sm">
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -112,8 +112,8 @@
                 <div
                     class="bg-white/80 backdrop-blur-xl rounded-[32px] shadow-sm overflow-hidden border border-[#E2E8F0] relative group hover:border-[#F97316]/40 transition-all duration-300">
                     <div class="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-r from-[#F97316] to-[#EA580C]"></div>
-                    <div class="p-8 h-full flex flex-col">
-                        <div class="flex items-center gap-4 mb-8">
+                    <div class="p-4 sm:p-8 h-full flex flex-col">
+                        <div class="flex items-center gap-4 mb-6 sm:mb-8">
                             <div
                                 class="w-12 h-12 rounded-xl bg-[#F97316]/10 flex items-center justify-center text-[#F97316] shadow-sm">
                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"

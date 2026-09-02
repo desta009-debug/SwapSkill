@@ -132,7 +132,7 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
     <div class="mx-auto max-w-7xl">
 
         {{-- ============ MAIN GLASS CAPSULE ============ --}}
-        <div class="lg-surface flex h-16 items-center justify-between rounded-full px-3 sm:px-5 lg:px-6">
+        <div class="lg-surface flex h-16 items-center justify-between rounded-full px-3 sm:px-4 lg:px-6">
 
             <div class="flex items-center gap-3 lg:gap-6 flex-1 min-w-0">
                 <!-- Logo -->
@@ -147,7 +147,7 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
                 </a>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex md:items-center md:gap-1 flex-1 overflow-x-auto no-scrollbar min-w-0 py-2">
+                <div class="hidden lg:flex lg:items-center lg:gap-1 flex-1 overflow-x-auto no-scrollbar min-w-0 py-2">
                     <a href="{{ route('dashboard') }}"
                         class="lg-pill shrink-0 whitespace-nowrap px-3.5 py-2 rounded-full text-sm font-bold {{ request()->routeIs('dashboard') ? 'bg-white/90 text-[#4338CA] shadow-[inset_0_1px_0_rgba(255,255,255,.8),0_8px_20px_-8px_rgba(79,70,229,.7)]' : 'text-white/75 hover:text-white hover:bg-white/10' }}">Dashboard</a>
                     <a href="{{ route('skills.edit') }}"
@@ -186,12 +186,12 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
             </div>
 
             <!-- Desktop Right -->
-            <div class="hidden md:flex md:items-center md:gap-3 shrink-0">
+            <div class="hidden lg:flex lg:items-center lg:gap-3 shrink-0">
 
                 <!-- Profile Dropdown -->
                 <div class="relative">
                     <button type="button" x-on:click="profileMenu = !profileMenu"
-                        class="lg-icon-btn flex items-center gap-3 rounded-full border border-white/25 bg-white/10 p-1.5 pr-4 hover:bg-white/20">
+                        class="lg-icon-btn flex items-center gap-3 rounded-full border border-white/25 bg-white/10 p-1.5 pr-4 hover:bg-white/20 min-h-[44px]">
                         <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}"
                             class="h-8 w-8 rounded-full object-cover ring-1 ring-white/50">
                         <div class="text-left">
@@ -206,7 +206,7 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
                         </svg>
                     </button>
 
-                    <div x-show="profileMenu"
+                    <div x-show="profileMenu" x-cloak
                         x-transition:enter="transition ease-[cubic-bezier(0.32,0.72,0,1)] duration-300"
                         x-transition:enter-start="opacity-0 translate-y-2 scale-95"
                         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -214,8 +214,7 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
                         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
                         x-transition:leave-end="opacity-0 translate-y-2 scale-95"
                         x-on:click.outside="profileMenu = false"
-                        class="lg-surface-light absolute right-0 mt-3 w-56 origin-top-right rounded-3xl p-2"
-                        style="display: none;">
+                        class="lg-surface-light absolute right-0 mt-3 w-56 origin-top-right rounded-3xl p-2 z-40">
                         <div class="px-3 py-2 mb-2 border-b border-slate-900/10">
                             <p class="text-xs font-bold text-[#64748B] uppercase tracking-wider">Akun Saya</p>
                         </div>
@@ -259,9 +258,9 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
             </div>
 
             <!-- Mobile menu button -->
-            <div class="flex items-center md:hidden">
+            <div class="flex items-center lg:hidden">
                 <button type="button" x-on:click="open = !open"
-                    class="lg-icon-btn inline-flex items-center justify-center rounded-full p-2.5 text-white/80 bg-white/5 hover:bg-white/15 hover:text-white">
+                    class="lg-icon-btn inline-flex items-center justify-center rounded-full p-2.5 min-w-[44px] min-h-[44px] text-white/80 bg-white/5 hover:bg-white/15 hover:text-white">
                     <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 6h16M4 12h16M4 18h16" />
@@ -274,11 +273,11 @@ kapsul kaca yang mengambang, bukan bar penuh menempel ke tepi layar --}}
         {{-- ============ /MAIN GLASS CAPSULE ============ --}}
 
         <!-- Mobile Menu: kartu kaca terpisah, melayang di bawah kapsul utama -->
-        <div x-show="open" x-transition:enter="transition ease-[cubic-bezier(0.32,0.72,0,1)] duration-300"
+        <div x-show="open" x-cloak
+            x-transition:enter="transition ease-[cubic-bezier(0.32,0.72,0,1)] duration-300"
             x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="lg-surface-light mt-3 rounded-3xl md:hidden"
-            style="display:none;">
+            x-transition:leave-end="opacity-0 -translate-y-2" class="lg-surface-light mt-3 rounded-3xl lg:hidden z-40">
             <div class="space-y-1 px-4 pb-4 pt-4">
                 <!-- Mobile User Profile -->
                 <div class="mb-6 flex items-center gap-4 rounded-2xl bg-white/60 border border-white/70 p-4">

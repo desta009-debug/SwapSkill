@@ -13,7 +13,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen text-white" style="background: linear-gradient(to bottom right, #0D1A63, #1A2CA3, #2845D6);">
+<body class="min-h-screen text-white" style="background: linear-gradient(160deg, #050B1E 0%, #08162F 50%, #101B3E 100%);">
     <div class="min-h-screen px-4 py-6 sm:px-6 lg:px-8">
         <div class="mx-auto grid min-h-[92vh] max-w-5xl overflow-hidden rounded-[28px] shadow-[0_20px_80px_rgba(40,69,214,0.35)] backdrop-blur-xl lg:grid-cols-2" style="border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05);">
             

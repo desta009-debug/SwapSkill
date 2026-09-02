@@ -37,13 +37,17 @@
         <div class="bg-white/80 backdrop-blur-xl rounded-[24px] shadow-sm border border-[#E2E8F0] overflow-hidden relative">
             <div class="p-8">
                 @if($completedSwaps->isEmpty())
-                    <div class="text-center py-16">
-                        <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[#E2E8F0]">
-                            <svg class="w-12 h-12 text-[#64748B]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                        </div>
-                        <h3 class="font-fraunces text-2xl font-bold text-[#0F172A]">Belum ada riwayat</h3>
-                        <p class="mt-3 text-[#64748B] max-w-md mx-auto">Riwayat swap yang sudah selesai atau ditolak akan muncul di sini.</p>
-                    </div>
+                <x-empty-state title="Belum ada riwayat." description="Riwayat swap yang sudah selesai atau ditolak akan muncul di sini.">
+                    <x-slot:icon>
+                        <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </x-slot:icon>
+                    <x-slot:primaryAction>
+                        <a href="{{ route('matches.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#F97316] to-[#EA580C] text-white text-sm font-bold rounded-xl hover:opacity-90 shadow-lg shadow-[#F97316]/30">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Mulai Swap Baru
+                        </a>
+                    </x-slot:primaryAction>
+                </x-empty-state>
                 @else
                     <div class="space-y-6">
                         @foreach($completedSwaps as $swap)
@@ -147,6 +151,11 @@
                             </div>
                         @endforeach
                     </div>
+                    @if($completedSwaps->hasPages())
+                        <div class="p-6 border-t border-[#E2E8F0] bg-slate-50/50 mt-6 rounded-b-[24px]">
+                            {{ $completedSwaps->links() }}
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

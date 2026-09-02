@@ -52,4 +52,9 @@ class SkillSwap extends Model
             Message::class
         );
     }
+
+    public function latestMessage()
+    {
+        return $this->hasOne(Message::class)->latestOfMany();
+    }
 }

@@ -45,14 +45,16 @@
                         <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-100 text-orange-600 font-bold shadow-sm">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
                         </span>
-                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Masuk <span class="text-[#64748B] text-base font-medium">({{ $incomingRequests->count() }})</span></h2>
+                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Masuk <span class="text-[#64748B] text-base font-medium">({{ $incomingRequests->total() }})</span></h2>
                     </div>
                     
                     <div class="p-6">
                         @if($incomingRequests->isEmpty())
-                            <div class="text-center py-8 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-white/50">
-                                <p class="text-sm font-medium text-[#64748B]">Belum ada request masuk.</p>
-                            </div>
+                            <x-empty-state variant="compact" title="Belum ada request masuk." description="Permintaan swap dari partner akan muncul di sini.">
+                                <x-slot:icon>
+                                    <svg class="w-7 h-7 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                                </x-slot:icon>
+                            </x-empty-state>
                         @else
                             <div class="space-y-4">
                                 @foreach($incomingRequests as $request)
@@ -61,14 +63,15 @@
                                             <div class="flex items-center gap-3">
                                                 <img src="{{ $request->sender->profile_photo_url }}" alt="{{ $request->sender->name }}" class="w-12 h-12 rounded-xl object-cover shadow-sm">
                                                 <div>
-                                                    <p class="font-bold text-[#0F172A]">{{ $request->sender->name }}</p>
+                                                    <a href="{{ route('user.show', $request->sender) }}" class="font-bold text-[#0F172A] hover:text-[#4F46E5] transition-colors">{{ $request->sender->name }}</a>
                                                     <p class="text-xs text-[#64748B] font-medium">{{ $request->created_at->diffForHumans() }}</p>
                                                 </div>
                                             </div>
                                             <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-xs font-black uppercase tracking-wider">Menunggu</span>
                                         </div>
                                         
-                                        <div class="mt-4 flex gap-2">
+                                        <div class="mt-4 flex flex-col sm:flex-row gap-2">
+                                            <a href="{{ route('user.show', $request->sender) }}" target="_blank" class="flex-1 flex items-center justify-center px-4 py-2 bg-indigo-50 text-[#4F46E5] text-sm font-bold rounded-xl hover:bg-indigo-100 transition-colors">Lihat Profil</a>
                                             <form action="{{ route('swaps.accept', $request) }}" method="POST" class="flex-1">
                                                 @csrf
                                                 <button type="submit" class="w-full px-4 py-2 bg-[#10B981] text-white text-sm font-bold rounded-xl hover:bg-[#059669] transition-colors shadow-sm">Terima</button>
@@ -83,6 +86,11 @@
                             </div>
                         @endif
                     </div>
+                    @if($incomingRequests->hasPages())
+                        <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
+                            {{ $incomingRequests->appends(request()->except('incoming_page'))->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 {{-- OUTGOING REQUESTS --}}
@@ -91,14 +99,22 @@
                         <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-100 text-[#4F46E5] font-bold shadow-sm">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
                         </span>
-                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Terkirim <span class="text-[#64748B] text-base font-medium">({{ $outgoingRequests->count() }})</span></h2>
+                        <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Request Terkirim <span class="text-[#64748B] text-base font-medium">({{ $outgoingRequests->total() }})</span></h2>
                     </div>
                     
                     <div class="p-6">
                         @if($outgoingRequests->isEmpty())
-                            <div class="text-center py-8 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-white/50">
-                                <p class="text-sm font-medium text-[#64748B]">Kamu belum mengirim request ke siapapun.</p>
-                            </div>
+                            <x-empty-state variant="compact" title="Belum ada request terkirim." description="Mulai cari partner dan kirim request swap.">
+                                <x-slot:icon>
+                                    <svg class="w-7 h-7 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+                                </x-slot:icon>
+                                <x-slot:primaryAction>
+                                    <a href="{{ route('matches.index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#4F46E5] to-[#4338CA] text-white text-sm font-bold rounded-xl hover:opacity-90 shadow-lg shadow-[#4F46E5]/30 transition-all">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                                        Cari Partner
+                                    </a>
+                                </x-slot:primaryAction>
+                            </x-empty-state>
                         @else
                             <div class="space-y-4">
                                 @foreach($outgoingRequests as $request)
@@ -113,11 +129,22 @@
                                             </div>
                                             <span class="px-3 py-1 bg-slate-100 text-[#64748B] rounded-lg text-xs font-black uppercase tracking-wider">Menunggu Balasan</span>
                                         </div>
+                                        <div class="mt-4 flex gap-2">
+                                            <form action="{{ route('swaps.cancel', $request) }}" method="POST" class="flex-1">
+                                                @csrf
+                                                <button type="submit" class="w-full px-4 py-2 bg-white border border-[#E2E8F0] text-red-600 text-sm font-bold rounded-xl hover:bg-red-50 hover:border-red-200 transition-colors">Batalkan</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
                         @endif
                     </div>
+                    @if($outgoingRequests->hasPages())
+                        <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50">
+                            {{ $outgoingRequests->appends(request()->except('outgoing_page'))->links() }}
+                        </div>
+                    @endif
                 </div>
 
             </div>
@@ -132,17 +159,16 @@
                             <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-[#10B981]/10 text-[#10B981] font-bold shadow-sm">
                                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                             </span>
-                            <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Swap Aktif <span class="text-[#64748B] text-base font-medium">({{ $activeSwaps->count() }})</span></h2>
+                            <h2 class="font-fraunces text-xl font-bold text-[#0F172A]">Swap Aktif <span class="text-[#64748B] text-base font-medium">({{ $activeSwaps->total() }})</span></h2>
                         </div>
                         
                         <div class="p-6">
                             @if($activeSwaps->isEmpty())
-                                <div class="text-center py-10 border-2 border-dashed border-[#E2E8F0] rounded-[16px] bg-slate-50/50">
-                                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <svg class="w-8 h-8 text-[#64748B]/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                                    </div>
-                                    <p class="text-sm font-medium text-[#64748B]">Belum ada swap yang aktif.</p>
-                                </div>
+                                <x-empty-state title="Belum ada swap yang aktif." description="Swap yang sedang berjalan akan muncul di sini.">
+                                    <x-slot:icon>
+                                        <svg class="w-10 h-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                                    </x-slot:icon>
+                                </x-empty-state>
                             @else
                                 <div class="space-y-4">
                                     @foreach($activeSwaps as $swap)
@@ -182,6 +208,11 @@
                                 </div>
                             @endif
                         </div>
+                        @if($activeSwaps->hasPages())
+                            <div class="p-4 border-t border-[#E2E8F0] bg-slate-50/50 rounded-b-[22px]">
+                                {{ $activeSwaps->appends(request()->except('active_page'))->links() }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

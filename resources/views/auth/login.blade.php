@@ -13,16 +13,16 @@
         *,*::before,*::after{box-sizing:border-box;}
 
         :root{
-            --navy:#0D1A63;
-            --mid:#1A2CA3;
-            --blue:#2845D6;
-            --orange:#F68048;
+            --navy:#08162F;
+            --mid:#12306B;
+            --blue:#2B6DFF;
+            --orange:#FF8A5B;
         }
 
         body{
             font-family:'DM Sans',sans-serif;
             margin:0;
-            background:#0D1A63;
+            background:#08162F;
             min-height:100vh;
         }
 
@@ -33,9 +33,9 @@
             place-items:center;
             padding:32px 16px;
             background:
-                radial-gradient(ellipse 70% 60% at 80% 20%, rgba(40,69,214,0.35) 0%, transparent 65%),
-                radial-gradient(ellipse 50% 50% at 10% 80%, rgba(246,128,72,0.10) 0%, transparent 60%),
-                #080F3A;
+                radial-gradient(ellipse 70% 60% at 80% 18%, rgba(43,109,255,0.26) 0%, transparent 66%),
+                radial-gradient(ellipse 50% 50% at 12% 82%, rgba(255,138,91,0.12) 0%, transparent 62%),
+                linear-gradient(135deg,#050B1E 0%,#08162F 54%,#101B3E 100%);
         }
 
         .l-card{
@@ -45,8 +45,8 @@
             grid-template-columns:1fr 1fr;
             border-radius:28px;
             overflow:hidden;
-            border:1px solid rgba(255,255,255,0.07);
-            box-shadow:0 32px 96px rgba(8,15,58,0.55);
+            border:1px solid rgba(255,255,255,0.10);
+            box-shadow:0 36px 110px rgba(0,0,0,0.58);
         }
         @media(max-width:768px){
             .l-card{grid-template-columns:1fr;}
@@ -55,7 +55,7 @@
 
         /* ── LEFT PANEL ── */
         .l-left{
-            background:var(--navy);
+            background:linear-gradient(160deg,#08162F 0%,#0C1D43 58%,#13285B 100%);
             padding:48px 44px;
             display:flex;
             flex-direction:column;
@@ -129,7 +129,7 @@
 
         /* ── RIGHT PANEL ── */
         .l-right{
-            background:#0B1230;
+            background:linear-gradient(180deg,#090F24 0%,#0C142D 100%);
             padding:52px 48px;
             display:flex;
             align-items:center;

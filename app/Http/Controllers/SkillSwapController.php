@@ -4,72 +4,58 @@ namespace App\Http\Controllers;
 
 use App\Models\SkillSwap;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreSkillSwapRequest;
+use App\Services\SkillSwapService;
+use App\Services\ModerationService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class SkillSwapController extends Controller
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'receiver_id' => [
-                'required',
-                'exists:users,id',
-            ],
-            'message' => [
-                'nullable',
-                'string',
-                'max:1000',
-            ],
-        ]);
+    use AuthorizesRequests;
 
+    private SkillSwapService $skillSwapService;
+    private ModerationService $moderationService;
+
+    public function __construct(SkillSwapService $skillSwapService, ModerationService $moderationService)
+    {
+        $this->skillSwapService = $skillSwapService;
+        $this->moderationService = $moderationService;
+    }
+
+    public function store(StoreSkillSwapRequest $request)
+    {
         $sender = Auth::user();
 
         if (! $sender instanceof User) {
             abort(403);
         }
 
-        $receiverId = (int) $request->receiver_id;
+        try {
+            $rawMessage = $request->message;
+            $hasProfanity = false;
+            $cleanedMessage = $rawMessage;
 
-        if ($sender->id === $receiverId) {
-            return back()->with(
-                'error',
-                'Tidak bisa mengirim request ke diri sendiri.'
+            if ($rawMessage && $this->moderationService->contains($rawMessage)) {
+                $cleanedMessage = $this->moderationService->clean($rawMessage);
+                $hasProfanity = true;
+            }
+
+            $this->skillSwapService->createSwapRequest(
+                $sender,
+                (int) $request->receiver_id,
+                $cleanedMessage
             );
+
+            $redirect = back()->with('success', 'Request berhasil dikirim.');
+            if ($hasProfanity) {
+                $redirect->with('warning', 'Peringatan Bahasa: Pesan request swap Anda mengandung kata yang dilarang dan telah difilter secara otomatis.');
+            }
+
+            return $redirect;
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        $existingPending = SkillSwap::query()
-            ->where('status', 'pending')
-            ->where(function ($query) use ($sender, $receiverId) {
-                $query->where(function($q) use ($sender, $receiverId) {
-                    $q->where('sender_id', $sender->id)
-                      ->where('receiver_id', $receiverId);
-                })
-                ->orWhere(function($q) use ($sender, $receiverId) {
-                    $q->where('sender_id', $receiverId)
-                      ->where('receiver_id', $sender->id);
-                });
-            })
-            ->exists();
-
-        if ($existingPending) {
-            return back()->with(
-                'error',
-                'Masih ada request pending.'
-            );
-        }
-
-        SkillSwap::create([
-            'sender_id' => $sender->id,
-            'receiver_id' => $receiverId,
-            'message' => $request->message,
-            'status' => 'pending',
-        ]);
-
-        return back()->with(
-            'success',
-            'Request berhasil dikirim.'
-        );
     }
 
     public function index()
@@ -80,35 +66,26 @@ class SkillSwapController extends Controller
             abort(403);
         }
 
-        $incomingRequests = SkillSwap::with([
-            'sender',
-            'receiver',
-        ])
+        $incomingRequests = SkillSwap::with(['sender', 'receiver'])
             ->where('receiver_id', $user->id)
             ->where('status', 'pending')
             ->latest()
-            ->get();
+            ->paginate(15, ['*'], 'incoming_page');
 
-        $outgoingRequests = SkillSwap::with([
-            'sender',
-            'receiver',
-        ])
+        $outgoingRequests = SkillSwap::with(['sender', 'receiver'])
             ->where('sender_id', $user->id)
             ->where('status', 'pending')
             ->latest()
-            ->get();
+            ->paginate(15, ['*'], 'outgoing_page');
 
-        $activeSwaps = SkillSwap::with([
-            'sender',
-            'receiver',
-        ])
+        $activeSwaps = SkillSwap::with(['sender', 'receiver'])
             ->where(function($q) use ($user) {
                 $q->where('sender_id', $user->id)
                   ->orWhere('receiver_id', $user->id);
             })
             ->where('status', 'accepted')
             ->latest()
-            ->get();
+            ->paginate(15, ['*'], 'active_page');
 
         return view('swaps.index', compact(
             'incomingRequests',
@@ -119,68 +96,55 @@ class SkillSwapController extends Controller
 
     public function accept(SkillSwap $skillSwap)
     {
-        if ($skillSwap->receiver_id !== Auth::id()) {
-            abort(403);
+        $this->authorize('accept', $skillSwap);
+
+        try {
+            $this->skillSwapService->acceptSwap($skillSwap);
+            return redirect()->route('messages.show', $skillSwap)->with(
+                'success',
+                'Request diterima. Selamat berdiskusi!'
+            );
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        if ($skillSwap->status !== 'pending') {
-            return back()->with('error', 'Request ini tidak lagi pending.');
-        }
-
-        $skillSwap->update([
-            'status' => 'accepted',
-            'accepted_at' => now(),
-        ]);
-
-        return redirect()->route('messages.show', $skillSwap)->with(
-            'success',
-            'Request diterima. Selamat berdiskusi!'
-        );
     }
 
     public function reject(SkillSwap $skillSwap)
     {
-        if ($skillSwap->receiver_id !== Auth::id()) {
-            abort(403);
+        $this->authorize('reject', $skillSwap);
+
+        try {
+            $this->skillSwapService->rejectSwap($skillSwap);
+            return back()->with('success', 'Request ditolak.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        if ($skillSwap->status !== 'pending') {
-            return back()->with('error', 'Request ini tidak lagi pending.');
-        }
-
-        $skillSwap->update([
-            'status' => 'rejected',
-        ]);
-
-        return back()->with(
-            'success',
-            'Request ditolak.'
-        );
     }
 
     public function complete(SkillSwap $skillSwap)
     {
-        if (
-            Auth::id() !== $skillSwap->sender_id &&
-            Auth::id() !== $skillSwap->receiver_id
-        ) {
-            abort(403);
+        $this->authorize('complete', $skillSwap);
+
+        try {
+            $this->skillSwapService->completeSwap($skillSwap);
+            return redirect()->route('swaps.history')->with('success', 'Skill swap berhasil diselesaikan.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        if ($skillSwap->status !== 'accepted') {
-            return back()->with('error', 'Hanya request yang sudah di-accept yang bisa diselesaikan.');
-        }
-
-        $skillSwap->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-        ]);
-
-        return back()->with(
-            'success',
-            'Skill swap berhasil diselesaikan.'
-        );
     }
+
+    public function cancel(SkillSwap $skillSwap)
+    {
+        $this->authorize('cancel', $skillSwap);
+
+        try {
+            $this->skillSwapService->cancelSwap($skillSwap);
+            return back()->with('success', 'Request berhasil dibatalkan.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function history()
     {
         $user = Auth::user();
@@ -202,11 +166,8 @@ class SkillSwapController extends Controller
                       ->orWhere('receiver_id', $user->id);
             })
             ->latest()
-            ->get();
+            ->paginate(15);
 
-        return view(
-            'swaps.history',
-            compact('completedSwaps')
-        );
+        return view('swaps.history', compact('completedSwaps'));
     }
 }

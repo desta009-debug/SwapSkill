@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
 use App\Services\ShowcaseService;
+use App\Services\ModerationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -14,10 +15,12 @@ class PortfolioController extends Controller
     use AuthorizesRequests;
 
     private ShowcaseService $showcaseService;
+    private ModerationService $moderationService;
 
-    public function __construct(ShowcaseService $showcaseService)
+    public function __construct(ShowcaseService $showcaseService, ModerationService $moderationService)
     {
         $this->showcaseService = $showcaseService;
+        $this->moderationService = $moderationService;
     }
 
     public function index(Request $request)
@@ -92,6 +95,19 @@ class PortfolioController extends Controller
             'featured' => 'nullable|boolean',
         ]);
 
+        $hasProfanity = false;
+
+        // Moderate title and description
+        if ($this->moderationService->contains($validated['title'])) {
+            $validated['title'] = $this->moderationService->clean($validated['title']);
+            $hasProfanity = true;
+        }
+
+        if ($this->moderationService->contains($validated['description'])) {
+            $validated['description'] = $this->moderationService->clean($validated['description']);
+            $hasProfanity = true;
+        }
+
         $portfolio = new Portfolio();
         $portfolio->user_id = Auth::id();
         $portfolio->title = $validated['title'];
@@ -118,7 +134,12 @@ class PortfolioController extends Controller
 
         $portfolio->save();
 
-        return redirect()->route('portfolio.show', $portfolio)->with('success', 'Portfolio project created successfully!');
+        $redirect = redirect()->route('portfolio.show', $portfolio)->with('success', 'Portfolio project created successfully!');
+        if ($hasProfanity) {
+            $redirect->with('warning', 'Peringatan Bahasa: Judul atau deskripsi portofolio mengandung kata yang dilarang dan telah difilter.');
+        }
+
+        return $redirect;
     }
 
     public function show(Portfolio $portfolio)
@@ -163,6 +184,18 @@ class PortfolioController extends Controller
             'featured' => 'nullable|boolean',
         ]);
 
+        $hasProfanity = false;
+
+        if ($this->moderationService->contains($validated['title'])) {
+            $validated['title'] = $this->moderationService->clean($validated['title']);
+            $hasProfanity = true;
+        }
+
+        if ($this->moderationService->contains($validated['description'])) {
+            $validated['description'] = $this->moderationService->clean($validated['description']);
+            $hasProfanity = true;
+        }
+
         $portfolio->title = $validated['title'];
         $portfolio->category = $validated['category'];
         $portfolio->description = $validated['description'];
@@ -189,7 +222,12 @@ class PortfolioController extends Controller
 
         $portfolio->save();
 
-        return redirect()->route('portfolio.show', $portfolio)->with('success', 'Portfolio project updated successfully!');
+        $redirect = redirect()->route('portfolio.show', $portfolio)->with('success', 'Portfolio project updated successfully!');
+        if ($hasProfanity) {
+            $redirect->with('warning', 'Peringatan Bahasa: Judul atau deskripsi portofolio mengandung kata yang dilarang dan telah difilter.');
+        }
+
+        return $redirect;
     }
 
     public function destroy(Portfolio $portfolio)

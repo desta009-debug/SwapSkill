@@ -13,11 +13,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'phone', 'profile_photo', 'password'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable([
+    'name',
+    'email',
+    'phone',
+    'profile_photo',
+    'password',
+    'role',
+])]
+#[Hidden([
+    'password',
+    'remember_token',
+])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     protected function casts(): array
@@ -27,6 +36,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
 
     public function skills(): BelongsToMany
     {
@@ -56,6 +71,87 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function sentRequests(): HasMany
+    {
+        return $this->hasMany(
+            SkillSwap::class,
+            'sender_id'
+        );
+    }
+
+    public function receivedRequests(): HasMany
+    {
+        return $this->hasMany(
+            SkillSwap::class,
+            'receiver_id'
+        );
+    }
+
+    public function completedSentSwaps(): HasMany
+    {
+        return $this->sentRequests()
+            ->where('status', 'completed');
+    }
+
+    public function completedReceivedSwaps(): HasMany
+    {
+        return $this->receivedRequests()
+            ->where('status', 'completed');
+    }
+
+    public function receivedRatings()
+    {
+        return $this->hasMany(
+            Rating::class,
+            'rated_user_id'
+        );
+    }
+
+    public function receivedRatingsForUser()
+    {
+        return $this->hasMany(
+            Rating::class,
+            'rated_user_id'
+        );
+    }
+
+    public function givenRatings()
+    {
+        return $this->hasMany(
+            Rating::class,
+            'rater_id'
+        );
+    }
+
+    public function portfolios()
+    {
+        return $this->hasMany(Portfolio::class);
+    }
+
+    public function certifications()
+    {
+        return $this->hasMany(Certification::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(
+            Message::class,
+            'sender_id'
+        );
+    }
+
+    public function moderationLogs(): HasMany
+    {
+        return $this->hasMany(ModerationLog::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
     public function getWhatsappLinkAttribute(): ?string
     {
         if (! $this->phone) {
@@ -79,70 +175,24 @@ class User extends Authenticatable
             return asset('storage/' . $this->profile_photo);
         }
 
-        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=4F46E5&background=EEF2FF';
-    }
-    public function sentRequests(): HasMany
-    {
-        return $this->hasMany(
-            SkillSwap::class,
-            'sender_id'
-        );
+        return 'https://ui-avatars.com/api/?name='
+            . urlencode($this->name)
+            . '&color=4F46E5&background=EEF2FF';
     }
 
-    public function receivedRequests(): HasMany
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    public function isAdmin(): bool
     {
-        return $this->hasMany(
-            SkillSwap::class,
-            'receiver_id'
-        );
+        return $this->role === 'admin';
     }
 
-    public function completedSentSwaps(): HasMany
+    public function isUser(): bool
     {
-        return $this->sentRequests()->where('status', 'completed');
+        return $this->role === 'user';
     }
-
-    public function completedReceivedSwaps(): HasMany
-    {
-        return $this->receivedRequests()->where('status', 'completed');
-    }
-
-    public function receivedRatings()
-    {
-        return $this->hasMany(Rating::class, 'rated_user_id');
-    }
-
-    public function portfolios()
-    {
-        return $this->hasMany(Portfolio::class);
-    }
-
-    public function certifications()
-    {
-        return $this->hasMany(Certification::class);
-    }
-    public function receivedRatingsForUser()
-    {
-        return $this->hasMany(
-            Rating::class,
-            'rated_user_id'
-        );
-    }
-
-    public function givenRatings()
-    {
-        return $this->hasMany(
-            Rating::class,
-            'rater_id'
-        );
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(
-            Message::class,
-            'sender_id'
-        );
-    }
-
 }
